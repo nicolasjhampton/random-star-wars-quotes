@@ -1,4 +1,5 @@
-"use strict";
+(function() {
+'use strict';
 
 /*  This script uses stock information in quotes.js and templates.js  */
 
@@ -21,18 +22,18 @@ var body = document.getElementsByTagName("body")[0];
 // Random integer generator
 var random = function(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
-}
+};
 
 // Helper function for inserting content into template
 var template = function(key, content) {
-  return templates[key]["begin"] + content + templates[key]["end"];
-}
+  return templates[key].begin + content + templates[key].end;
+};
 
 // Sets a random color based on the color object
 var setRandomColor = function() {
   var randomIndex = random(0, colors.length);
   body.style.backgroundColor = colors[randomIndex];
-}
+};
 
 // returns a random quote object from the quotes array
 var getRandomQuote = function() {
@@ -45,7 +46,7 @@ var getRandomQuote = function() {
   }
   //Rerun this function if we used this quote before
   return getRandomQuote(); // Recursion like woah ;)
-}
+};
 
 // assembles the html string for each element from the template array
 var makeElement = function(obj, key) {
@@ -63,7 +64,7 @@ var makeElement = function(obj, key) {
   }
 
   return template(key, content);
-}
+};
 
 
 
@@ -99,7 +100,7 @@ var printQuote = function() {
   setRandomColor(); // Randomly change the color of the screen
   // Set a autoPlay in 10 seconds
   autoPlay = window.setTimeout(printQuote, 10000);
-}
+};
 
 
 // event listener to respond to clicks on the page
@@ -108,3 +109,4 @@ document.getElementById('loadQuote').addEventListener("click", printQuote, false
 
 // Set an autoplay timer
 autoPlay = window.setTimeout(printQuote, 5000);
+})();
