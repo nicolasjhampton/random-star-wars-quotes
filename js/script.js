@@ -1,4 +1,4 @@
-(function() {
+(function($) {
 'use strict';
 
 /*  This script uses stock information in quotes.js and templates.js  */
@@ -11,7 +11,7 @@ var autoPlay;
 
 var usedQuotes = [];
 
-var quoteBox = document.getElementById("quote-box");
+var quoteBox = $('#quote-box');
 
 var body = document.getElementsByTagName("body")[0];
 
@@ -75,6 +75,7 @@ var makeElement = function(obj, key) {
 var printQuote = function() {
   // Reset the recent autoplay timer
   window.clearTimeout(autoPlay);
+  quoteBox.hide();
 
   var quoteHTML = "";
   var sourceHTML = "";
@@ -91,13 +92,15 @@ var printQuote = function() {
   });
 
   // Insert the html for the main quote
-  quoteBox.innerHTML = quoteHTML;
+  quoteBox.html(quoteHTML);
+  // quoteBox.innerHTML = quoteHTML;
   // If we have more data, put it in the source element
   if(sourceHTML !== "") {
-    quoteBox.getElementsByClassName('source')[0].innerHTML += sourceHTML;
+    $('.source').html(sourceHTML);
   }
 
   setRandomColor(); // Randomly change the color of the screen
+  quoteBox.fadeIn('slow');
   // Set a autoPlay in 10 seconds
   autoPlay = window.setTimeout(printQuote, 10000);
 };
@@ -109,4 +112,4 @@ document.getElementById('loadQuote').addEventListener("click", printQuote, false
 
 // Set an autoplay timer
 autoPlay = window.setTimeout(printQuote, 5000);
-})();
+})($);
