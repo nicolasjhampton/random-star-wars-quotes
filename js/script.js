@@ -1,4 +1,4 @@
-(function($) {
+$(function() {
 'use strict';
 
 /*  This script uses stock information in quotes.js and templates.js  */
@@ -112,4 +112,4 @@ document.getElementById('loadQuote').addEventListener("click", printQuote, false
 
 // Set an autoplay timer
 autoPlay = window.setTimeout(printQuote, 5000);
-})($);
+});
