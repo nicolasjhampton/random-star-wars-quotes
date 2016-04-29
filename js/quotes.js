@@ -2,7 +2,7 @@
  *  Object literals
  */
 
-var quotes =
+var starWarsQuotes =
   [
     {
       "quote": "You've failed. I am a Jedi, like my father before me.",
