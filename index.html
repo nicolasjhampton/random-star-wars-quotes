@@ -9,17 +9,18 @@
 </head>
 <body>
   <div class="container">
-    <div id="quote-box">
+    <!-- <div class="quote-box">
       <p class="title">“Random Star Wars Quotes”</p>
-    </div>
+    </div> -->
     <button id="loadQuote">Show another quote</button>
   </div>
   <script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
   <script src="js/quoter.js"></script>
   <script src="js/quotes.js"></script>
   <script>
-    var quoter = new Quoter(starWarsQuotes);
-    quoter.attachButton($('#loadQuote')).setAutoplay(5000);
+    var quoter = new Quoter(starWarsQuotes, {"title": "Random Star Wars Quotes"});
+    var quoter2 = new Quoter(starWarsQuotes2, {"title": "Random Star Wars Quotes"});
+    quoter.attachTo('.container').setButton('#loadQuote').setAutoplay(5000);
   </script>
 </body>
 </html>
