@@ -51,10 +51,10 @@ var Quoter = (function($) {
   };
 
   // Sets a random color based on the color object
-  var setRandomColor = function() {
+  var setRandomColorTo = function($object) {
     //var that = this;
     var randomIndex = random(0, colors.length);
-    billboard.css("background-color", colors[randomIndex]);
+    $object.css("background-color", colors[randomIndex]);
   };
 
   // assembles the html string for each element from the template array
@@ -78,7 +78,7 @@ var Quoter = (function($) {
   // returns a random quote object from the quotes array
   var getRandomQuote = function() {
     var randomIndex = random(0, quotes.length);
-    if (usedQuotes.indexOf(randomIndex) === -1) { // If we haven't used this quote before...
+    if (!usedQuotes.includes(randomIndex)) { // If we haven't used this quote before...
       usedQuotes.push(randomIndex); // Add it to the list of used quotes
       return quotes[randomIndex]; // Return the quote
     } else if (usedQuotes.length === quotes.length) {
@@ -105,24 +105,19 @@ var Quoter = (function($) {
 
   Quoter.prototype.printQuotes = function() {
     var that = this;
-    var quoteHTML = "";
-    var sourceHTML = "";
     var randomQuote = getRandomQuote(); // Get a random quote
-    //  Hide the quoteBox, then clear the inside of it
-    quoteBox.hide();
-    quoteBox.children().remove();
-    // Get all the keynames in an array, then map through them
+    quoteBox.hide(); //  Hide the quoteBox
+    quoteBox.children().remove(); // clear the quoteBox
+    // Get keynames in an array, then map through them
     Object.keys(randomQuote).map(function(key, index){
       // Append first 2 to the quoteBox, the rest go inside the source element
       var target = index < 2 ? quoteBox : quoteBox.children('.source');
       target.append(makeElement(randomQuote, key));
     });
-    // Randomly change the color of the screen and fade it in
-    setRandomColor();
-    quoteBox.fadeIn('slow');
-    // If an autotimer has been set, clear and reset it
-    if(this.duration) {
-      if(autoPlay) {window.clearTimeout(autoPlay);}
+    setRandomColorTo(billboard); // Randomly change billboard bg color
+    quoteBox.fadeIn('slow'); // fade in quoteBox
+    if(this.duration) { // If an autotimer has been set
+      if(autoPlay) {window.clearTimeout(autoPlay);} // clear and reset autotimer
       autoPlay = window.setInterval(that.printQuotes.bind(that), this.duration);
     }
   }
