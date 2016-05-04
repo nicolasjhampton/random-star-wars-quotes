@@ -14,9 +14,12 @@
     </div>
     <button id="loadQuote">Show another quote</button>
   </div>
-  <script src="js/quotes.js"></script>
-  <script src="js/templates.js"></script>
   <script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
-  <script src="js/script.js"></script>
+  <script src="js/quoter.js"></script>
+  <script src="js/quotes.js"></script>
+  <script>
+    var quoter = new Quoter(starWarsQuotes);
+    quoter.attachButton($('#loadQuote')).setAutoplay(5000);
+  </script>
 </body>
 </html>
