@@ -10,6 +10,12 @@ var Quoter = (function($) {
   var billboard;
   var title;
   var quoteClassString;
+  var fullScreen = {
+    "position": "absolute",
+    "display": "inline-block",
+    "height": "100%",
+    "width": "100%"
+  };
 
   // Templates for various quote elements
   var templates =
@@ -125,12 +131,7 @@ var Quoter = (function($) {
   Quoter.prototype.attachTo = function(cssSelector) {
     var that = this;
     billboard = $(cssSelector);
-    billboard.css({
-      "position": "absolute",
-      "display": "inline-block",
-      "height": "100%",
-      "width": "100%"
-    });
+    billboard.css(fullScreen);
     if (billboard.children('.' + quoteClass).length === 0) {
       var quoteStart = $('<div class="' + quoteClass + '"></div>')
                         .append($('<p class="title">' + title + '</p>'));
