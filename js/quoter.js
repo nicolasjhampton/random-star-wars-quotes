@@ -1,4 +1,4 @@
-var Quoter = (function($) {
+var Quoter = (function($, window, document) {
   'use strict';
 
   var autoPlay;
@@ -45,6 +45,22 @@ var Quoter = (function($) {
         "end": "</p>"
       }
     };
+
+  function Quoter(quoteObject, config) {
+
+    if(!config) { config = {}; }
+
+    quotes = quoteObject;
+    title = config.title || "";
+    quoteClass = config.quoteClass || 'quote-box';
+    quoteClassString = '.' + quoteClass;
+    colors = config.colors || [
+      "blue",
+      "red",
+      "green",
+      "purple"
+    ];
+  }
 
   // Random integer generator
   var random = function(min, max) {
@@ -95,20 +111,6 @@ var Quoter = (function($) {
   };
 
 
-  function Quoter(quoteObject, config) {
-    if(!config) { config = {}; }
-    quotes = quoteObject;
-    title = config.title || "";
-    quoteClass = config.quoteClass || 'quote-box'
-    quoteClassString = '.' + quoteClass;
-    colors = config.colors || [
-      "blue",
-      "red",
-      "green",
-      "purple"
-    ];
-  }
-
   Quoter.prototype.printQuotes = function() {
     var that = this;
     var randomQuote = getRandomQuote(); // Get a random quote
@@ -126,7 +128,7 @@ var Quoter = (function($) {
       if(autoPlay) {window.clearTimeout(autoPlay);} // clear and reset autotimer
       autoPlay = window.setInterval(that.printQuotes.bind(that), this.duration);
     }
-  }
+  };
 
   Quoter.prototype.attachTo = function(cssSelector) {
     var that = this;
@@ -140,21 +142,21 @@ var Quoter = (function($) {
     }
     quoteBox = $(quoteClassString);
     window.setTimeout(that.printQuotes.bind(that), 5000);
-    return that; // Chainable
-  }
+    return that; 
+  };
 
   Quoter.prototype.setButton = function(cssSelector) {
     var that = this;
     $(cssSelector).click(that.printQuotes.bind(that));
-    return that; // Chainable
-  }
+    return that;
+  };
 
   Quoter.prototype.setAutoplay = function(duration) {
     var that = this;
     this.duration = duration;
-    return that; // Chainable
-  }
+    return that;
+  };
 
   return Quoter;
 
-})(jQuery);
+})(jQuery, window, document);
