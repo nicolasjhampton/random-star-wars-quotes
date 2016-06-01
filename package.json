@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.html",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --require babel-core/register --reporter nyan"
   },
   "repository": {
     "type": "git",
