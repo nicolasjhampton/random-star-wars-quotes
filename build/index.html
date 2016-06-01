@@ -9,16 +9,18 @@
 </head>
 <body>
   <div class="container">
-    <div class="quote-box">
-      <p class="title">“Random Star Wars Quotes”</p>
-    </div>
     <button id="loadQuote">Show another quote</button>
+  </div>
+  <div class="container2">
+    <button id="loadQuote2">Show another quote</button>
   </div>
   <script src="js/app.bundle.js"></script>
   <script src="js/quotes.js"></script>
   <script>
     var quoter = new Quoter(starWarsQuotes, {"title": "Random Star Wars Quotes"});
+    var quoter2 = new Quoter(starWarsQuotes, {"title": "Random Star Wars Quotes"});
     quoter.attachTo('.container').setButton('#loadQuote').setAutoplay(5000);
+    quoter2.attachTo('.container2').setButton('#loadQuote2').setAutoplay(5000);
   </script>
 </body>
 </html>

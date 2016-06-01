@@ -3,7 +3,7 @@ var $ = require('jquery');
 
 // Helper function for inserting content into template
 var template = function(templateObj, key, content) {
-  return templateObj[key].begin + content + templateObj[key].end;
+  return `${templateObj[key].begin}${content}${templateObj[key].end}`;
 };
 
 // Handles each sub-tag template
@@ -15,7 +15,7 @@ var createTags = function(templateObj, tagString) {
 
 // assembles the html string for each element from the template array
 var makeElement = function(templateObj, obj, key) {
-  var content = (key === "tags") ? createTags(templateObj, obj[key]) : obj[key];
+  var content = (key === 'tags') ? createTags(templateObj, obj[key]) : obj[key];
   return template(templateObj, key, content);
 };
 
@@ -36,7 +36,7 @@ var random = function(min, max) {
 
 // Sets a random color based on the color object
 var getRandomColor = function() {
-  return "rgba(" + random(0, 256) + " ," + random(0, 256) + " ," + random(0, 256) + " , 1.0)";
+  return `rgba(${random(0, 256)}, ${random(0, 256)}, ${random(0, 256)}, 1.0)`;
 };
 
 var clearArray = function(array) {
@@ -49,15 +49,14 @@ var useQuote = function(quoteObj, index) {
 };
 
 var createQuotebox = function(classname, title) {
-  var title = $('<p class="title">' + title + '</p>');
-  var quote = $('<div class="' + classname + '"></div>');
+  var title = $(`<p class="title">${title}</p>`);
+  var quote = $(`<div class="${classname}"></div>`);
   return quote.append(title);
 };
 
 var hideOldQuote = function(quoteBox) {
   quoteBox.hide(); //  Hide the quoteBox
   quoteBox.children().remove(); // clear the quoteBox
-  return quoteBox;
 };
 
 var showNewQuote = function(quoteBox) {
@@ -65,7 +64,7 @@ var showNewQuote = function(quoteBox) {
 };
 
 var changeBackgroundColor = function(billboard) {
-  billboard.css("background-color", getRandomColor());
+  billboard.css('background-color', getRandomColor());
 };
 
 module.exports.random = random;

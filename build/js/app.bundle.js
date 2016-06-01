@@ -82,12 +82,6 @@
 	    "tags": { "begin": "<span class='tags'>Tags: ", "end": "</span>" },
 	    "tag": { "begin": "<p class='tag'>", "end": "</p>" }
 	  },
-	  "fullScreen": {
-	    "position": "absolute",
-	    "display": "inline-block",
-	    "height": "100%",
-	    "width": "100%"
-	  },
 	  "quoteClass": "quote-box",
 	  "title": ""
 	};
@@ -145,8 +139,8 @@
 
 	Quoter.prototype.attachTo = function (cssSelector) {
 	  this.billboard = (0, _jquery2.default)(cssSelector);
-	  this.billboard.prepend(createQuotebox(this.config.quoteClass, this.config.title)).css(this.config.fullScreen);
-	  this.quoteBox = (0, _jquery2.default)('.' + this.config.quoteClass); // Cache quoteBox
+	  this.billboard.prepend(createQuotebox(this.config.quoteClass, this.config.title));
+	  this.quoteBox = (0, _jquery2.default)(cssSelector + ' .' + this.config.quoteClass); // Cache quoteBox
 	  return this;
 	};
 
@@ -18047,7 +18041,7 @@
 
 	// Helper function for inserting content into template
 	var template = function template(templateObj, key, content) {
-	  return templateObj[key].begin + content + templateObj[key].end;
+	  return '' + templateObj[key].begin + content + templateObj[key].end;
 	};
 
 	// Handles each sub-tag template
@@ -18059,7 +18053,7 @@
 
 	// assembles the html string for each element from the template array
 	var makeElement = function makeElement(templateObj, obj, key) {
-	  var content = key === "tags" ? createTags(templateObj, obj[key]) : obj[key];
+	  var content = key === 'tags' ? createTags(templateObj, obj[key]) : obj[key];
 	  return template(templateObj, key, content);
 	};
 
@@ -18080,7 +18074,7 @@
 
 	// Sets a random color based on the color object
 	var getRandomColor = function getRandomColor() {
-	  return "rgba(" + random(0, 256) + " ," + random(0, 256) + " ," + random(0, 256) + " , 1.0)";
+	  return 'rgba(' + random(0, 256) + ', ' + random(0, 256) + ', ' + random(0, 256) + ', 1.0)';
 	};
 
 	var clearArray = function clearArray(array) {
@@ -18101,7 +18095,6 @@
 	var hideOldQuote = function hideOldQuote(quoteBox) {
 	  quoteBox.hide(); //  Hide the quoteBox
 	  quoteBox.children().remove(); // clear the quoteBox
-	  return quoteBox;
 	};
 
 	var showNewQuote = function showNewQuote(quoteBox) {
@@ -18109,7 +18102,7 @@
 	};
 
 	var changeBackgroundColor = function changeBackgroundColor(billboard) {
-	  billboard.css("background-color", getRandomColor());
+	  billboard.css('background-color', getRandomColor());
 	};
 
 	module.exports.random = random;

@@ -26,12 +26,6 @@ const defaults = {
     "tags": { "begin": "<span class='tags'>Tags: ", "end": "</span>" },
     "tag": { "begin": "<p class='tag'>", "end": "</p>" }
   },
-  "fullScreen": {
-    "position": "absolute",
-    "display": "inline-block",
-    "height": "100%",
-    "width": "100%"
-  },
   "quoteClass": "quote-box",
   "title": ""
 };
@@ -86,9 +80,8 @@ Quoter.prototype.resetTimer = function() {
 
 Quoter.prototype.attachTo = function(cssSelector) {
   this.billboard = $(cssSelector);
-  this.billboard.prepend(createQuotebox(this.config.quoteClass, this.config.title))
-                .css(this.config.fullScreen);
-  this.quoteBox = $('.' + this.config.quoteClass); // Cache quoteBox
+  this.billboard.prepend(createQuotebox(this.config.quoteClass, this.config.title));
+  this.quoteBox = $(`${cssSelector} .${this.config.quoteClass}`); // Cache quoteBox
   return this;
 };
 
