@@ -32,14 +32,12 @@ const defaults = {
 
 
 function Quoter(quoteArray, options) {
+  if(!options) { options = {}; }
+  this.config = $.extend({}, defaults, options);
   this.quotes = {
     "new": quoteArray,
     "used": []
   };
-
-  if(!options) { options = {}; }
-  this.config = $.extend({}, defaults, options);
-
 };
 
 // returns a random quote object from the quotes array

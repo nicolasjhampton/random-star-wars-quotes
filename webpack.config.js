@@ -1,14 +1,23 @@
+var webpack = require('webpack');
+
 module.exports = {
-     entry: './src/js/quoter.js',
+     entry: {
+       "app": "./src/js/quoter.js",
+       "vendor": ["babel-polyfill", "jquery"]
+     },
      output: {
-         path: './build/js',
-         filename: 'app.bundle.js'
+       path: "./build/js",
+       filename: "[name].bundle.js"
      },
      module: {
-         loaders: [{
-             test: /\.js$/,
-             exclude: /node_modules/,
-             loader: 'babel-loader',
-         }]
-     }
+       loaders: [{
+         test: /\.js$/,
+         exclude: /node_modules/,
+         loader: "babel-loader",
+       }]
+     },
+     plugins: [
+       new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.js", Infinity),
+       new webpack.ProvidePlugin({ $: "jquery" })
+     ]
  };
