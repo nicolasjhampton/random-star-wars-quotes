@@ -4,8 +4,8 @@ var port = '3000';
 module.exports = {
     entry: 'mocha!./test/quoter.test.js',
     output: {
+        path: './test/',
         filename: 'test.build.js',
-        path: 'test/',
         publicPath: 'http://' + hostname + ':' + port + '/tests'
     },
     module: {

@@ -21,19 +21,30 @@ var makeElement = function(templateObj, obj, key) {
   return template(templateObj, key, content);
 };
 
+var createQuotebox = function(templateObj, classname, title) {
+  var quotebox = document.createElement('div');
+  quotebox.innerHTML = template(templateObj, 'title', title);
+  quotebox.className = classname;
+  return quotebox;
+};
+
 var createNewQuote = function(templateObj, quoteBox, randQuote) {
   // Get keynames in an array, then map through them
+  quoteBox.innerHTML = '';
   Object.keys(randQuote).map(function(key, index) {
     // Append first 2 to the quoteBox, the rest go inside the source element
-    var target = index < 2 ? quoteBox : quoteBox.children('.source');
-    target.append(makeElement(templateObj, randQuote, key));
+    var target = index < 2 ? quoteBox : quoteBox.getElementsByClassName('source')[0];
+
+    target.innerHTML += makeElement(templateObj, randQuote, key);
   });
   return quoteBox;
 };
 
 // Random integer generator
 var random = function(min, max) {
-  return Math.floor(Math.random() * (max - min) + min);
+  var low = (min < max) ? min : max;
+  var high = (max > min) ? max : min;
+  return Math.floor(Math.random() * (high - low) + low);
 };
 
 // Sets a random color based on the color object
@@ -48,12 +59,6 @@ var clearArray = function(array) {
 var useQuote = function(quoteObj, index) {
   quoteObj.used.push(index); // Add it to the list of used quotes
   return quoteObj.new[index]; // Return the quote
-};
-
-var createQuotebox = function(classname, title) {
-  var title = $(`<p class="title">${title}</p>`);
-  var quote = $(`<div class="${classname}"></div>`);
-  return quote.append(title);
 };
 
 var hideOldQuote = function(quoteBox) {

@@ -39,7 +39,9 @@ webpackJsonp([0],{
 	    "citation": { "begin": "<span class='citation'>", "end": "</span>" },
 	    "year": { "begin": "<span class='year'>", "end": "</span>" },
 	    "tags": { "begin": "<span class='tags'>Tags: ", "end": "</span>" },
-	    "tag": { "begin": "<p class='tag'>", "end": "</p>" }
+	    "tag": { "begin": "<p class='tag'>", "end": "</p>" },
+	    "title": { "begin": "<p class='title'>", "end": "</p>" },
+	    "quotebox": { "begin": "<div class='", "end": "'></div>" }
 	  },
 	  "quoteClass": "quote-box",
 	  "title": ""
@@ -97,8 +99,9 @@ webpackJsonp([0],{
 
 	Quoter.prototype.attachTo = function (cssSelector) {
 	  this.billboard = (0, _jquery2.default)(cssSelector);
-	  this.billboard.prepend(createQuotebox(this.config.quoteClass, this.config.title));
+	  this.billboard.prepend(createQuotebox(this.config.templates, this.config.quoteClass, this.config.title));
 	  this.quoteBox = (0, _jquery2.default)(cssSelector + ' .' + this.config.quoteClass); // Cache quoteBox
+	  console.dir(this.quoteBox);
 	  return this;
 	};
 
@@ -144,12 +147,21 @@ webpackJsonp([0],{
 	  return template(templateObj, key, content);
 	};
 
+	var createQuotebox = function createQuotebox(templateObj, classname, title) {
+	  var quotebox = document.createElement('div');
+	  quotebox.innerHTML = template(templateObj, 'title', title);
+	  quotebox.className = classname;
+	  return quotebox;
+	};
+
 	var createNewQuote = function createNewQuote(templateObj, quoteBox, randQuote) {
 	  // Get keynames in an array, then map through them
+	  quoteBox.innerHTML = '';
 	  Object.keys(randQuote).map(function (key, index) {
 	    // Append first 2 to the quoteBox, the rest go inside the source element
-	    var target = index < 2 ? quoteBox : quoteBox.children('.source');
-	    target.append(makeElement(templateObj, randQuote, key));
+	    var target = index < 2 ? quoteBox : quoteBox.getElementsByClassName('source')[0]; //$(quoteBox).children('.source');
+	    //target.append(makeElement(templateObj, randQuote, key));
+	    target.innerHTML += makeElement(templateObj, randQuote, key);
 	  });
 	  return quoteBox;
 	};
@@ -171,12 +183,6 @@ webpackJsonp([0],{
 	var useQuote = function useQuote(quoteObj, index) {
 	  quoteObj.used.push(index); // Add it to the list of used quotes
 	  return quoteObj.new[index]; // Return the quote
-	};
-
-	var createQuotebox = function createQuotebox(classname, title) {
-	  var title = $('<p class="title">' + title + '</p>');
-	  var quote = $('<div class="' + classname + '"></div>');
-	  return quote.append(title);
 	};
 
 	var hideOldQuote = function hideOldQuote(quoteBox) {

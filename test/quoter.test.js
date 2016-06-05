@@ -6,12 +6,22 @@ import * as util from '../src/js/util.js';
 
 describe('utilities', function() {
 
+  var templateObj = {
+    "quote": { "begin": "<p class='quote'>", "end": "</p>" },
+    "source": { "begin": "<p class='source'>", "end": "</p>" },
+    "citation": { "begin": "<span class='citation'>", "end": "</span>" },
+    "year": { "begin": "<span class='year'>", "end": "</span>" },
+    "tags": { "begin": "<span class='tags'>Tags: ", "end": "</span>" },
+    "tag": { "begin": "<p class='tag'>", "end": "</p>" },
+    "title": {"begin": "<p class='title'>", "end": "</p>" },
+    "quotebox": {"begin": "<div class='", "end": "'></div>" }
+  };
+
   describe('template', function() {
 
     var testString;
 
     before(function() {
-      var templateObj = {"quote": { "begin": "<p class='quote'>", "end": "</p>" }};
       var key = "quote";
       var content = "This is a quote.";
       testString = util.template(templateObj, key, content);
@@ -29,30 +39,23 @@ describe('utilities', function() {
 
   describe('createTags', function() {
 
-    var tagsString;
+    var tagString;
 
     before(function() {
-      var templateObj = {"tag": { "begin": "<p class='tag'>", "end": "</p>" }};
-      var tagString = "humor science philosophy";
-      tagsString = util.createTags(templateObj, tagString);
+      tagString = "humor science philosophy";
     });
 
     it('returns a collection of tag elements', function() {
+      var tagsString = util.createTags(templateObj, tagString);
       expect(tagsString).to.match(/^(<p class='tag'>[\w]+<\/p>)+$/i);
     });
   });
 
   describe('makeElement', function() {
 
-    var templateObj;
     var obj;
 
     before(function() {
-      templateObj = {
-        "quote": { "begin": "<p class='quote'>", "end": "</p>" },
-        "tags": { "begin": "<span class='tags'>Tags: ", "end": "</span>" },
-        "tag": { "begin": "<p class='tag'>", "end": "</p>" }
-      };
       obj = {
         "quote": "Of course I love him. He's my brother.",
         "tags": "humor art philosophy"
@@ -70,11 +73,7 @@ describe('utilities', function() {
   });
 
   describe('createQuotebox', function() {
-    // var createQuotebox = function(classname, title) {
-    //   var title = $(`<p class="title">${title}</p>`);
-    //   var quote = $(`<div class="${classname}"></div>`);
-    //   return quote.append(title);
-    // };
+
     var title;
     var classname;
 
@@ -83,51 +82,62 @@ describe('utilities', function() {
       classname = 'quote-box';
     });
 
-    it('should return a jquery element', function() {
-      var quotebox = util.createQuotebox(classname, title);
-      expect($(quotebox)).to.have.ownProperty('selector');
+    it('should return a quotebox element', function() {
+      var elementText = `<div class="${classname}"><p class="title">${title}</p></div>`;
+      var quotebox = util.createQuotebox(templateObj, classname, title);
+      expect(quotebox.outerHTML).to.equal(elementText);
     });
 
-    it('');
-    it('');
   });
 
-  // describe('createNewQuote', function() {
-  //   // var createNewQuote = function(templateObj, quoteBox, randQuote) {
-  //   //   // Get keynames in an array, then map through them
-  //   //   Object.keys(randQuote).map(function(key, index) {
-  //   //     // Append first 2 to the quoteBox, the rest go inside the source element
-  //   //     var target = index < 2 ? quoteBox : quoteBox.children('.source');
-  //   //     target.append(makeElement(templateObj, randQuote, key));
-  //   //   });
-  //   //   return quoteBox;
-  //   // };
-  //   var templateObj;
-  //   var quoteBox;
-  //
-  //   before(function() {
-  //     templateObj = {
-  //       "quote": { "begin": "<p class='quote'>", "end": "</p>" },
-  //       "source": { "begin": "<p class='source'>", "end": "</p>" },
-  //       "citation": { "begin": "<span class='citation'>", "end": "</span>" },
-  //       "year": { "begin": "<span class='year'>", "end": "</span>" },
-  //       "tags": { "begin": "<span class='tags'>Tags: ", "end": "</span>" },
-  //       "tag": { "begin": "<p class='tag'>", "end": "</p>" }
-  //     };
-  //     quoteBox =
-  //   });
-  //
-  //   it('should return a DOM element', function() {
-  //
-  //   });
-  //
-  //   it('');
-  //
-  // });
-  describe('random', function() {
-    it('');
-    it('');
+  describe('createNewQuote', function() {
+
+    var quoteBox;
+    var randQuote;
+
+    before(function() {
+      quoteBox = util.createQuotebox(templateObj, 'quote-box', 'Star Wars Quotes');
+      randQuote = {
+        "quote": "Of course I love him. He's my brother.",
+        "source": "Princess Leia",
+        "citation": "Return of the Jedi",
+        "year": 1984,
+        "tags": "humor art"
+      };
+    });
+
+    it('should return an HTML element that matches the expected format', function() {
+      var expectedElement = '<div class="quote-box"><p class="quote">Of course I love him. He\'s my brother.</p><p class="source">Princess Leia<span class="citation">Return of the Jedi</span><span class="year">1984</span><span class="tags">Tags: <p class="tag">humor</p><p class="tag">art</p></span></p></div>';
+      var elementProduced = util.createNewQuote(templateObj, quoteBox, randQuote);
+      expect(elementProduced.outerHTML).to.equal(expectedElement);
+    });
+
+    //it('');
+
   });
+
+
+  describe('random', function() {
+
+    var num1;
+    var num2;
+
+    before(function() {
+      num1 = util.random(20, 24);
+      num2 = util.random(30, 24);
+    });
+
+    it('should return an integer', function() {
+      expect(num1 % 1).to.equal(0);
+      expect(num2 % 1).to.equal(0);
+    });
+
+    it('should be within expected range', function() {
+      expect(num1).to.be.within(20,24);
+      expect(num2).to.be.within(24,30);
+    });
+  });
+
   describe('getRandomColor', function() {
     it('');
     it('');

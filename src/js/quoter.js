@@ -24,7 +24,9 @@ const defaults = {
     "citation": { "begin": "<span class='citation'>", "end": "</span>" },
     "year": { "begin": "<span class='year'>", "end": "</span>" },
     "tags": { "begin": "<span class='tags'>Tags: ", "end": "</span>" },
-    "tag": { "begin": "<p class='tag'>", "end": "</p>" }
+    "tag": { "begin": "<p class='tag'>", "end": "</p>" },
+    "title": {"begin": "<p class='title'>", "end": "</p>" },
+    "quotebox": {"begin": "<div class='", "end": "'></div>" }
   },
   "quoteClass": "quote-box",
   "title": ""
@@ -78,8 +80,9 @@ Quoter.prototype.resetTimer = function() {
 
 Quoter.prototype.attachTo = function(cssSelector) {
   this.billboard = $(cssSelector);
-  this.billboard.prepend(createQuotebox(this.config.quoteClass, this.config.title));
+  this.billboard.prepend(createQuotebox(this.config.templates, this.config.quoteClass, this.config.title));
   this.quoteBox = $(`${cssSelector} .${this.config.quoteClass}`); // Cache quoteBox
+  console.dir(this.quoteBox);
   return this;
 };
 
