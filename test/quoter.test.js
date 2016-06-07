@@ -24,7 +24,7 @@ describe('utilities', function() {
     before(function() {
       var key = "quote";
       var content = "This is a quote.";
-      testString = util.template(templateObj, key, content);
+      testString = util.template.call(templateObj, key, content);
     });
 
     it('should be a method on the template object');
@@ -52,7 +52,7 @@ describe('utilities', function() {
     it('should be a method on the template object');
 
     it('returns a collection of tag elements', function() {
-      var tagsString = util.createTags(templateObj, tagString);
+      var tagsString = util.createTags.call(templateObj, tagString);
       expect(tagsString).to.match(/^(<p class='tag'>[\w]+<\/p>)+$/i);
     });
 
@@ -72,12 +72,12 @@ describe('utilities', function() {
     it('should be a method on the template object');
 
     it('should create a standard element', function() {
-      var elementString = util.makeElement(templateObj, obj, "quote");
+      var elementString = util.makeElement.call(templateObj, obj, "quote");
       expect(elementString).to.match(/^<([\w]+)[\s\w\=\']*>.+<\/\1>$/i);
     });
 
     it('should create a tags element when appropriate', function() {
-      var elementString = util.makeElement(templateObj, obj, "tags");
+      var elementString = util.makeElement.call(templateObj, obj, "tags");
       expect(elementString).to.match(/<span class='tags'>Tags:\s(<p class='tag'>[\w]+<\/p>)+<\/span>/i);
     });
 
@@ -97,7 +97,7 @@ describe('utilities', function() {
 
     it('should return a quotebox element', function() {
       var elementText = `<div class="${classname}"><p class="title">${title}</p></div>`;
-      var quotebox = util.createQuotebox(templateObj, classname, title);
+      var quotebox = util.createQuotebox.call(templateObj, classname, title);
       expect(quotebox.outerHTML).to.equal(elementText);
     });
 
@@ -109,7 +109,7 @@ describe('utilities', function() {
     var randQuote;
 
     before(function() {
-      quoteBox = util.createQuotebox(templateObj, 'quote-box', 'Star Wars Quotes');
+      quoteBox = util.createQuotebox.call(templateObj, 'quote-box', 'Star Wars Quotes');
       randQuote = {
         "quote": "Of course I love him. He's my brother.",
         "source": "Princess Leia",
@@ -121,7 +121,7 @@ describe('utilities', function() {
 
     it('should return an HTML element that matches the expected format', function() {
       var expectedElement = '<div class="quote-box"><p class="quote">Of course I love him. He\'s my brother.</p><p class="source">Princess Leia<span class="citation">Return of the Jedi</span><span class="year">1984</span><span class="tags">Tags: <p class="tag">humor</p><p class="tag">art</p></span></p></div>';
-      var elementProduced = util.createNewQuote(templateObj, quoteBox, randQuote);
+      var elementProduced = util.createNewQuote.call(templateObj, quoteBox, randQuote);
       expect(elementProduced.outerHTML).to.equal(expectedElement);
     });
 

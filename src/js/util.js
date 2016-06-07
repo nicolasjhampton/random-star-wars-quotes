@@ -4,38 +4,44 @@ var $ = require('jquery');
 
 
 // Helper function for inserting content into template
-var template = function(templateObj, key, content) {
-  return `${templateObj[key].begin}${content}${templateObj[key].end}`;
+// var template = function(templateObj, key, content) {
+//   return `${templateObj[key].begin}${content}${templateObj[key].end}`;
+// };
+
+var template = function(key, content) {
+  return `${this[key].begin}${content}${this[key].end}`;
 };
 
 // Handles each sub-tag template
-var createTags = function(templateObj, tagString) {
+var createTags = function(tagString) {
+  var that = this;
   return tagString.split(' ').map(function (tag) {
-    return template(templateObj, 'tag', tag);
+    return template.call(that, 'tag', tag);
   }).join('');
 };
 
 // assembles the html string for each element from the template array
-var makeElement = function(templateObj, obj, key) {
-  var content = (key === 'tags') ? createTags(templateObj, obj[key]) : obj[key];
-  return template(templateObj, key, content);
+var makeElement = function(obj, key) {
+  var content = (key === 'tags') ? createTags.call(this, obj[key]) : obj[key];
+  return template.call(this, key, content);
 };
 
-var createQuotebox = function(templateObj, classname, title) {
+var createQuotebox = function(classname, title) {
   var quotebox = document.createElement('div');
-  quotebox.innerHTML = template(templateObj, 'title', title);
+  quotebox.innerHTML = template.call(this, 'title', title);
   quotebox.className = classname;
   return quotebox;
 };
 
-var createNewQuote = function(templateObj, quoteBox, randQuote) {
+var createNewQuote = function(quoteBox, randQuote) {
+  var that = this;
   // Get keynames in an array, then map through them
   quoteBox.innerHTML = '';
   Object.keys(randQuote).map(function(key, index) {
     // Append first 2 to the quoteBox, the rest go inside the source element
     var target = index < 2 ? quoteBox : quoteBox.getElementsByClassName('source')[0];
 
-    target.innerHTML += makeElement(templateObj, randQuote, key);
+    target.innerHTML += makeElement.call(that, randQuote, key);
   });
   return quoteBox;
 };

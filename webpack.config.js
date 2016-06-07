@@ -5,9 +5,11 @@ module.exports = {
        "app": "./src/js/quoter.js",
        "vendor": ["babel-polyfill", "jquery"]
      },
+     devtool: 'source-map',
      output: {
        path: "./build/js",
-       filename: "[name].bundle.js"
+       filename: "[name].bundle.js",
+       sourceMapFilename: "[name].map.js"
      },
      module: {
        loaders: [{
