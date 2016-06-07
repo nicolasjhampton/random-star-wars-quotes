@@ -12,8 +12,8 @@ const random = util.random,
       clearArray = util.clearArray,
       useQuote = util.useQuote,
       createQuotebox = util.createQuotebox,
-      hideOldQuote = util.hideOldQuote,
-      showNewQuote = util.showNewQuote,
+      hide = util.hide,
+      show = util.show,
       createNewQuote = util.createNewQuote,
       changeBackgroundColor = util.changeBackgroundColor;
 
@@ -62,10 +62,10 @@ Quoter.prototype.printQuote = function() {
   var that = this;
   var randQuote = this.randomQuote(); // Get a random quote
 
-  hideOldQuote(this.quoteBox);
-  createNewQuote(this.config.templates, this.quoteBox, randQuote);
+  hide(this.quoteBox);
+  this.quoteBox = createNewQuote(this.config.templates, this.quoteBox, randQuote);
   changeBackgroundColor(this.billboard);
-  showNewQuote(this.quoteBox);
+  show(this.quoteBox);
 
   this.resetTimer();
 };
@@ -79,10 +79,10 @@ Quoter.prototype.resetTimer = function() {
 };
 
 Quoter.prototype.attachTo = function(cssSelector) {
-  this.billboard = $(cssSelector);
-  this.billboard.prepend(createQuotebox(this.config.templates, this.config.quoteClass, this.config.title));
-  this.quoteBox = $(`${cssSelector} .${this.config.quoteClass}`); // Cache quoteBox
-  console.dir(this.quoteBox);
+  this.billboard = document.querySelector(cssSelector);
+  this.billboard.appendChild(createQuotebox(this.config.templates, this.config.quoteClass, this.config.title));
+  this.quoteBox = document.querySelector(`${cssSelector} .${this.config.quoteClass}`);
+  console.log(this.quoteBox);
   return this;
 };
 

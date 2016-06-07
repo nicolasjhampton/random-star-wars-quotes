@@ -61,17 +61,16 @@ var useQuote = function(quoteObj, index) {
   return quoteObj.new[index]; // Return the quote
 };
 
-var hideOldQuote = function(quoteBox) {
-  quoteBox.hide(); //  Hide the quoteBox
-  quoteBox.children().remove(); // clear the quoteBox
+var hide = function(element) {
+  element.style.opacity = '0';
 };
 
-var showNewQuote = function(quoteBox) {
-  quoteBox.fadeIn('slow'); // fade in quoteBox
+var show = function(element) {
+  element.style.opacity = '1';
 };
 
 var changeBackgroundColor = function(billboard) {
-  billboard.css('background-color', getRandomColor());
+  billboard.style.backgroundColor = getRandomColor();
 };
 
 module.exports.random = random;
@@ -82,7 +81,7 @@ module.exports.makeElement = makeElement;
 module.exports.clearArray = clearArray;
 module.exports.useQuote = useQuote;
 module.exports.createQuotebox = createQuotebox;
-module.exports.hideOldQuote = hideOldQuote;
-module.exports.showNewQuote = showNewQuote;
+module.exports.hide = hide;
+module.exports.show = show;
 module.exports.createNewQuote = createNewQuote;
 module.exports.changeBackgroundColor = changeBackgroundColor;

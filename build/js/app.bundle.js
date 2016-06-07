@@ -27,8 +27,8 @@ webpackJsonp([0],{
 	    clearArray = util.clearArray,
 	    useQuote = util.useQuote,
 	    createQuotebox = util.createQuotebox,
-	    hideOldQuote = util.hideOldQuote,
-	    showNewQuote = util.showNewQuote,
+	    hide = util.hide,
+	    show = util.show,
 	    createNewQuote = util.createNewQuote,
 	    changeBackgroundColor = util.changeBackgroundColor;
 
@@ -79,10 +79,10 @@ webpackJsonp([0],{
 	  var that = this;
 	  var randQuote = this.randomQuote(); // Get a random quote
 
-	  hideOldQuote(this.quoteBox);
-	  createNewQuote(this.config.templates, this.quoteBox, randQuote);
+	  hide(this.quoteBox);
+	  this.quoteBox = createNewQuote(this.config.templates, this.quoteBox, randQuote);
 	  changeBackgroundColor(this.billboard);
-	  showNewQuote(this.quoteBox);
+	  show(this.quoteBox);
 
 	  this.resetTimer();
 	};
@@ -98,10 +98,10 @@ webpackJsonp([0],{
 	};
 
 	Quoter.prototype.attachTo = function (cssSelector) {
-	  this.billboard = (0, _jquery2.default)(cssSelector);
-	  this.billboard.prepend(createQuotebox(this.config.templates, this.config.quoteClass, this.config.title));
-	  this.quoteBox = (0, _jquery2.default)(cssSelector + ' .' + this.config.quoteClass); // Cache quoteBox
-	  console.dir(this.quoteBox);
+	  this.billboard = document.querySelector(cssSelector);
+	  this.billboard.appendChild(createQuotebox(this.config.templates, this.config.quoteClass, this.config.title));
+	  this.quoteBox = document.querySelector(cssSelector + ' .' + this.config.quoteClass);
+	  console.log(this.quoteBox);
 	  return this;
 	};
 
@@ -159,8 +159,8 @@ webpackJsonp([0],{
 	  quoteBox.innerHTML = '';
 	  Object.keys(randQuote).map(function (key, index) {
 	    // Append first 2 to the quoteBox, the rest go inside the source element
-	    var target = index < 2 ? quoteBox : quoteBox.getElementsByClassName('source')[0]; //$(quoteBox).children('.source');
-	    //target.append(makeElement(templateObj, randQuote, key));
+	    var target = index < 2 ? quoteBox : quoteBox.getElementsByClassName('source')[0];
+
 	    target.innerHTML += makeElement(templateObj, randQuote, key);
 	  });
 	  return quoteBox;
@@ -168,7 +168,9 @@ webpackJsonp([0],{
 
 	// Random integer generator
 	var random = function random(min, max) {
-	  return Math.floor(Math.random() * (max - min) + min);
+	  var low = min < max ? min : max;
+	  var high = max > min ? max : min;
+	  return Math.floor(Math.random() * (high - low) + low);
 	};
 
 	// Sets a random color based on the color object
@@ -185,17 +187,16 @@ webpackJsonp([0],{
 	  return quoteObj.new[index]; // Return the quote
 	};
 
-	var hideOldQuote = function hideOldQuote(quoteBox) {
-	  quoteBox.hide(); //  Hide the quoteBox
-	  quoteBox.children().remove(); // clear the quoteBox
+	var hide = function hide(element) {
+	  element.style.opacity = '0';
 	};
 
-	var showNewQuote = function showNewQuote(quoteBox) {
-	  quoteBox.fadeIn('slow'); // fade in quoteBox
+	var show = function show(element) {
+	  element.style.opacity = '1';
 	};
 
 	var changeBackgroundColor = function changeBackgroundColor(billboard) {
-	  billboard.css('background-color', getRandomColor());
+	  billboard.style.backgroundColor = getRandomColor();
 	};
 
 	module.exports.random = random;
@@ -206,8 +207,8 @@ webpackJsonp([0],{
 	module.exports.clearArray = clearArray;
 	module.exports.useQuote = useQuote;
 	module.exports.createQuotebox = createQuotebox;
-	module.exports.hideOldQuote = hideOldQuote;
-	module.exports.showNewQuote = showNewQuote;
+	module.exports.hide = hide;
+	module.exports.show = show;
 	module.exports.createNewQuote = createNewQuote;
 	module.exports.changeBackgroundColor = changeBackgroundColor;
 
