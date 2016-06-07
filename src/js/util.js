@@ -1,13 +1,5 @@
 'use strict';
 
-var $ = require('jquery');
-
-
-// Helper function for inserting content into template
-// var template = function(templateObj, key, content) {
-//   return `${templateObj[key].begin}${content}${templateObj[key].end}`;
-// };
-
 var template = function(key, content) {
   return `${this[key].begin}${content}${this[key].end}`;
 };
@@ -79,6 +71,31 @@ var changeBackgroundColor = function(billboard) {
   billboard.style.backgroundColor = getRandomColor();
 };
 
+// extend code snippet from http://youmightnotneedjquery.com/,
+// https://github.com/HubSpot/YouMightNotNeedjQuery
+
+var extend = function(out) {
+  out = out || {};
+
+  for (var i = 1; i < arguments.length; i++) {
+    var obj = arguments[i];
+
+    if (!obj)
+      continue;
+
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        if (typeof obj[key] === 'object')
+          out[key] = extend(out[key], obj[key]);
+        else
+          out[key] = obj[key];
+      }
+    }
+  }
+
+  return out;
+};
+
 module.exports.random = random;
 module.exports.template = template;
 module.exports.getRandomColor = getRandomColor;
@@ -91,3 +108,4 @@ module.exports.hide = hide;
 module.exports.show = show;
 module.exports.createNewQuote = createNewQuote;
 module.exports.changeBackgroundColor = changeBackgroundColor;
+module.exports.extend = extend;

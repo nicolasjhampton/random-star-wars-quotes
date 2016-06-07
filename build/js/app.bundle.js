@@ -7,17 +7,11 @@ webpackJsonp([0],{
 	
 	__webpack_require__(1);
 	
-	var _jquery = __webpack_require__(299);
-	
-	var _jquery2 = _interopRequireDefault(_jquery);
-	
-	var _util = __webpack_require__(300);
+	var _util = __webpack_require__(299);
 	
 	var util = _interopRequireWildcard(_util);
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var random = util.random,
 	    template = util.template,
@@ -30,7 +24,8 @@ webpackJsonp([0],{
 	    hide = util.hide,
 	    show = util.show,
 	    createNewQuote = util.createNewQuote,
-	    changeBackgroundColor = util.changeBackgroundColor;
+	    changeBackgroundColor = util.changeBackgroundColor,
+	    extend = util.extend;
 	
 	var defaults = {
 	  "templates": {
@@ -51,7 +46,7 @@ webpackJsonp([0],{
 	  if (!options) {
 	    options = {};
 	  }
-	  this.config = _jquery2.default.extend({}, defaults, options);
+	  this.config = extend({}, defaults, options);
 	  this.quotes = {
 	    "new": quoteArray,
 	    "used": []
@@ -80,7 +75,7 @@ webpackJsonp([0],{
 	  var randQuote = this.randomQuote(); // Get a random quote
 	
 	  hide(this.quoteBox);
-	  this.quoteBox = createNewQuote(this.config.templates, this.quoteBox, randQuote);
+	  this.quoteBox = createNewQuote.call(this.config.templates, this.quoteBox, randQuote);
 	  changeBackgroundColor(this.billboard);
 	  show(this.quoteBox);
 	
@@ -99,15 +94,16 @@ webpackJsonp([0],{
 	
 	Quoter.prototype.attachTo = function (cssSelector) {
 	  this.billboard = document.querySelector(cssSelector);
-	  this.billboard.appendChild(createQuotebox(this.config.templates, this.config.quoteClass, this.config.title));
+	  var quoteboxElement = createQuotebox.call(this.config.templates, this.config.quoteClass, this.config.title);
+	  this.billboard.insertBefore(quoteboxElement, this.billboard.firstChild);
 	  this.quoteBox = document.querySelector(cssSelector + ' .' + this.config.quoteClass);
-	  console.log(this.quoteBox);
 	  return this;
 	};
 	
 	Quoter.prototype.setButton = function (cssSelector) {
 	  var that = this;
-	  (0, _jquery2.default)(cssSelector).click(that.printQuote.bind(that));
+	  var targetButton = document.querySelector(cssSelector);
+	  targetButton.addEventListener('click', that.printQuote.bind(that));
 	  return that;
 	};
 	
@@ -122,17 +118,12 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 300:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 299:
+/***/ function(module, exports) {
 
 	'use strict';
 	
-	var $ = __webpack_require__(299);
-	
-	// Helper function for inserting content into template
-	// var template = function(templateObj, key, content) {
-	//   return `${templateObj[key].begin}${content}${templateObj[key].end}`;
-	// };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 	
 	var template = function template(key, content) {
 	  return '' + this[key].begin + content + this[key].end;
@@ -148,25 +139,26 @@ webpackJsonp([0],{
 	
 	// assembles the html string for each element from the template array
 	var makeElement = function makeElement(obj, key) {
-	  var content = key === 'tags' ? createTags(obj[key]) : obj[key];
-	  return template(key, content);
+	  var content = key === 'tags' ? createTags.call(this, obj[key]) : obj[key];
+	  return template.call(this, key, content);
 	};
 	
-	var createQuotebox = function createQuotebox(templateObj, classname, title) {
+	var createQuotebox = function createQuotebox(classname, title) {
 	  var quotebox = document.createElement('div');
-	  quotebox.innerHTML = template('title', title);
+	  quotebox.innerHTML = template.call(this, 'title', title);
 	  quotebox.className = classname;
 	  return quotebox;
 	};
 	
-	var createNewQuote = function createNewQuote(templateObj, quoteBox, randQuote) {
+	var createNewQuote = function createNewQuote(quoteBox, randQuote) {
+	  var that = this;
 	  // Get keynames in an array, then map through them
 	  quoteBox.innerHTML = '';
 	  Object.keys(randQuote).map(function (key, index) {
 	    // Append first 2 to the quoteBox, the rest go inside the source element
 	    var target = index < 2 ? quoteBox : quoteBox.getElementsByClassName('source')[0];
 	
-	    target.innerHTML += makeElement(templateObj, randQuote, key);
+	    target.innerHTML += makeElement.call(that, randQuote, key);
 	  });
 	  return quoteBox;
 	};
@@ -204,6 +196,27 @@ webpackJsonp([0],{
 	  billboard.style.backgroundColor = getRandomColor();
 	};
 	
+	// extend code snippet from http://youmightnotneedjquery.com/,
+	// https://github.com/HubSpot/YouMightNotNeedjQuery
+	
+	var extend = function extend(out) {
+	  out = out || {};
+	
+	  for (var i = 1; i < arguments.length; i++) {
+	    var obj = arguments[i];
+	
+	    if (!obj) continue;
+	
+	    for (var key in obj) {
+	      if (obj.hasOwnProperty(key)) {
+	        if (_typeof(obj[key]) === 'object') out[key] = extend(out[key], obj[key]);else out[key] = obj[key];
+	      }
+	    }
+	  }
+	
+	  return out;
+	};
+	
 	module.exports.random = random;
 	module.exports.template = template;
 	module.exports.getRandomColor = getRandomColor;
@@ -216,6 +229,7 @@ webpackJsonp([0],{
 	module.exports.show = show;
 	module.exports.createNewQuote = createNewQuote;
 	module.exports.changeBackgroundColor = changeBackgroundColor;
+	module.exports.extend = extend;
 
 /***/ }
 

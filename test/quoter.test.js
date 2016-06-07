@@ -1,7 +1,6 @@
 'use strict';
 
 import {expect} from 'chai';
-import $ from 'jquery';
 import * as util from '../src/js/util.js';
 
 describe('utilities', function() {
@@ -28,8 +27,6 @@ describe('utilities', function() {
     });
 
     it('should be a method on the template object');
-
-    it('should use *this* and .call() to pull in the templateObj context');
 
     it('returns a complete HTML snippet', function() {
       expect(testString).to.match(/^<([\w]+)[\s\w\=\']*>.+<\/\1>$/i);

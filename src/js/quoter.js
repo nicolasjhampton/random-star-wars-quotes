@@ -1,7 +1,6 @@
 'use strict';
 
 import 'babel-polyfill';
-import $ from 'jquery';
 import * as util from './util';
 
 const random = util.random,
@@ -15,7 +14,8 @@ const random = util.random,
       hide = util.hide,
       show = util.show,
       createNewQuote = util.createNewQuote,
-      changeBackgroundColor = util.changeBackgroundColor;
+      changeBackgroundColor = util.changeBackgroundColor,
+      extend = util.extend;
 
 const defaults = {
   "templates": {
@@ -32,10 +32,9 @@ const defaults = {
   "title": ""
 };
 
-
 function Quoter(quoteArray, options) {
   if(!options) { options = {}; }
-  this.config = $.extend({}, defaults, options);
+  this.config = extend({}, defaults, options);
   this.quotes = {
     "new": quoteArray,
     "used": []
@@ -63,7 +62,7 @@ Quoter.prototype.printQuote = function() {
   var randQuote = this.randomQuote(); // Get a random quote
 
   hide(this.quoteBox);
-  this.quoteBox = createNewQuote(this.config.templates, this.quoteBox, randQuote);
+  this.quoteBox = createNewQuote.call(this.config.templates, this.quoteBox, randQuote);
   changeBackgroundColor(this.billboard);
   show(this.quoteBox);
 
@@ -80,15 +79,16 @@ Quoter.prototype.resetTimer = function() {
 
 Quoter.prototype.attachTo = function(cssSelector) {
   this.billboard = document.querySelector(cssSelector);
-  this.billboard.appendChild(createQuotebox(this.config.templates, this.config.quoteClass, this.config.title));
+  var quoteboxElement = createQuotebox.call(this.config.templates, this.config.quoteClass, this.config.title);
+  this.billboard.insertBefore(quoteboxElement, this.billboard.firstChild);
   this.quoteBox = document.querySelector(`${cssSelector} .${this.config.quoteClass}`);
-  console.log(this.quoteBox);
   return this;
 };
 
 Quoter.prototype.setButton = function(cssSelector) {
   var that = this;
-  $(cssSelector).click(that.printQuote.bind(that));
+  var targetButton = document.querySelector(cssSelector);
+  targetButton.addEventListener('click', that.printQuote.bind(that));
   return that;
 };
 
