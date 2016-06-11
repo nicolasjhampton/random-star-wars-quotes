@@ -1,21 +1,8 @@
 'use strict';
 
-import 'babel-polyfill';
+//import 'babel-polyfill';
 import * as util from './util';
-
-const random = util.random,
-      template = util.template,
-      getRandomColor = util.getRandomColor,
-      createTags = util.createTags,
-      makeElement = util.makeElement,
-      clearArray = util.clearArray,
-      useQuote = util.useQuote,
-      createQuotebox = util.createQuotebox,
-      hide = util.hide,
-      show = util.show,
-      createNewQuote = util.createNewQuote,
-      changeBackgroundColor = util.changeBackgroundColor,
-      extend = util.extend;
+import {TemplateEngine} from './template_engine';
 
 const defaults = {
   "templates": {
@@ -34,23 +21,40 @@ const defaults = {
 
 function Quoter(quoteArray, options) {
   if(!options) { options = {}; }
-  this.config = extend({}, defaults, options);
-  this.quotes = {
-    "new": quoteArray,
-    "used": []
-  };
+  this.config = util.extend({}, defaults, options);
+  this.tEng = new TemplateEngine(this.config.templates);
+  this.quotes = quoteArray;
+};
+
+Quoter.prototype.createQuotebox = function(classname, title) {
+  var quoteBox = document.createElement('div');
+  quoteBox.innerHTML = this.tEng.makeElement({"title": title}, 'title');
+  quoteBox.className = classname;
+  return quoteBox;
+};
+
+Quoter.prototype.createNewQuote = function(randQuote) {
+  var quoteBox = this.createQuotebox('quote-box', '');
+  Object.keys(randQuote).map((key, index) => {
+    var target = index < 2 ? quoteBox : quoteBox.getElementsByClassName('source')[0];
+    target.innerHTML += this.tEng.makeElement(randQuote, key);
+  });
+  return quoteBox;
 };
 
 // returns a random quote object from the quotes array
-Quoter.prototype.randomQuote = function() {
-  var randomIndex = random(0, this.quotes.new.length);
+Quoter.prototype.randomQuote = function randomQuote() {
+  randomQuote.used = randomQuote.used || []; //self-reference;
 
-  if (this.quotes.used.length === this.quotes.new.length) { // If all the quotes have been used...
-    clearArray(this.quotes.used);
+  var randomIndex = util.random(0, this.quotes.length);
+
+  if (randomQuote.used.length === this.quotes.length) { // If all the quotes have been used...
+    util.clearArray(randomQuote.used);
   }
 
-  if (!this.quotes.used.includes(randomIndex)) { // If we haven't used this quote before...
-    return useQuote(this.quotes, randomIndex);
+  if (!randomQuote.used.includes(randomIndex)) {
+    randomQuote.used.push(randomIndex);
+    return this.quotes[randomIndex];
   }
 
   return this.randomQuote(); // Recursion like woah ;)
@@ -59,29 +63,30 @@ Quoter.prototype.randomQuote = function() {
 
 Quoter.prototype.printQuote = function() {
   var that = this;
-  var randQuote = this.randomQuote(); // Get a random quote
+  var randQuote = that.randomQuote(); // Get a random quote
 
-  hide(this.quoteBox);
-  this.quoteBox = createNewQuote.call(this.config.templates, this.quoteBox, randQuote);
-  changeBackgroundColor(this.billboard);
-  show(this.quoteBox);
+  util.hide(this.quoteBox);
+  var newQuoteBox = this.createNewQuote(randQuote);
+  this.billboard.replaceChild(newQuoteBox, this.quoteBox);
+  this.quoteBox = newQuoteBox;
+  util.changeBackgroundColor(this.billboard);
+  util.show(this.quoteBox);
 
   this.resetTimer();
 };
 
 Quoter.prototype.resetTimer = function() {
   var that = this;
-  if(that.duration) {
-    if(that.autoPlay) {window.clearTimeout(that.autoPlay);}
-    that.autoPlay = window.setTimeout(that.printQuote.bind(that), that.duration);
+  if(this.duration) {
+    if(this.autoPlay) {window.clearTimeout(that.autoPlay);}
+    this.autoPlay = window.setTimeout(that.printQuote.bind(that), this.duration);
   }
 };
 
 Quoter.prototype.attachTo = function(cssSelector) {
   this.billboard = document.querySelector(cssSelector);
-  var quoteboxElement = createQuotebox.call(this.config.templates, this.config.quoteClass, this.config.title);
-  this.billboard.insertBefore(quoteboxElement, this.billboard.firstChild);
-  this.quoteBox = document.querySelector(`${cssSelector} .${this.config.quoteClass}`);
+  this.quoteBox = this.createQuotebox(this.config.quoteClass, this.config.title);
+  this.billboard.insertBefore(this.quoteBox, this.billboard.firstChild);
   return this;
 };
 
@@ -89,14 +94,15 @@ Quoter.prototype.setButton = function(cssSelector) {
   var that = this;
   var targetButton = document.querySelector(cssSelector);
   targetButton.addEventListener('click', that.printQuote.bind(that));
-  return that;
+  return this;
 };
 
 Quoter.prototype.setAutoplay = function(duration) {
   var that = this;
   this.duration = duration;
   window.setTimeout(that.printQuote.bind(that), duration);
-  return that;
+  return this;
 };
 
+module.exports.Quoter = Quoter;
 window.Quoter = Quoter;

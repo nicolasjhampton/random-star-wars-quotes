@@ -43,3 +43,5 @@ var starWarsQuotes =
       "tags": "drama"
     }
   ];
+
+module.exports.starWarsQuotes = starWarsQuotes;

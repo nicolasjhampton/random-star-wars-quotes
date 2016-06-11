@@ -1,31 +1,18 @@
-webpackJsonp([0],{
-
-/***/ 0:
+webpackJsonp([0],[
+/* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	__webpack_require__(1);
+	//import 'babel-polyfill';
 	
-	var _util = __webpack_require__(299);
+	var _util = __webpack_require__(1);
 	
 	var util = _interopRequireWildcard(_util);
 	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	var _template_engine = __webpack_require__(2);
 	
-	var random = util.random,
-	    template = util.template,
-	    getRandomColor = util.getRandomColor,
-	    createTags = util.createTags,
-	    makeElement = util.makeElement,
-	    clearArray = util.clearArray,
-	    useQuote = util.useQuote,
-	    createQuotebox = util.createQuotebox,
-	    hide = util.hide,
-	    show = util.show,
-	    createNewQuote = util.createNewQuote,
-	    changeBackgroundColor = util.changeBackgroundColor,
-	    extend = util.extend;
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	var defaults = {
 	  "templates": {
@@ -46,25 +33,43 @@ webpackJsonp([0],{
 	  if (!options) {
 	    options = {};
 	  }
-	  this.config = extend({}, defaults, options);
-	  this.quotes = {
-	    "new": quoteArray,
-	    "used": []
-	  };
+	  this.config = util.extend({}, defaults, options);
+	  this.tEng = new _template_engine.TemplateEngine(this.config.templates);
+	  this.quotes = quoteArray;
+	};
+	
+	Quoter.prototype.createQuotebox = function (classname, title) {
+	  var quoteBox = document.createElement('div');
+	  quoteBox.innerHTML = this.tEng.makeElement({ "title": title }, 'title');
+	  quoteBox.className = classname;
+	  return quoteBox;
+	};
+	
+	Quoter.prototype.createNewQuote = function (randQuote) {
+	  var _this = this;
+	
+	  var quoteBox = this.createQuotebox('quote-box', '');
+	  Object.keys(randQuote).map(function (key, index) {
+	    var target = index < 2 ? quoteBox : quoteBox.getElementsByClassName('source')[0];
+	    target.innerHTML += _this.tEng.makeElement(randQuote, key);
+	  });
+	  return quoteBox;
 	};
 	
 	// returns a random quote object from the quotes array
-	Quoter.prototype.randomQuote = function () {
-	  var randomIndex = random(0, this.quotes.new.length);
+	Quoter.prototype.randomQuote = function randomQuote() {
+	  randomQuote.used = randomQuote.used || []; //self-reference;
 	
-	  if (this.quotes.used.length === this.quotes.new.length) {
+	  var randomIndex = util.random(0, this.quotes.length);
+	
+	  if (randomQuote.used.length === this.quotes.length) {
 	    // If all the quotes have been used...
-	    clearArray(this.quotes.used);
+	    util.clearArray(randomQuote.used);
 	  }
 	
-	  if (!this.quotes.used.includes(randomIndex)) {
-	    // If we haven't used this quote before...
-	    return useQuote(this.quotes, randomIndex);
+	  if (!randomQuote.used.includes(randomIndex)) {
+	    randomQuote.used.push(randomIndex);
+	    return this.quotes[randomIndex];
 	  }
 	
 	  return this.randomQuote(); // Recursion like woah ;)
@@ -72,31 +77,32 @@ webpackJsonp([0],{
 	
 	Quoter.prototype.printQuote = function () {
 	  var that = this;
-	  var randQuote = this.randomQuote(); // Get a random quote
+	  var randQuote = that.randomQuote(); // Get a random quote
 	
-	  hide(this.quoteBox);
-	  this.quoteBox = createNewQuote.call(this.config.templates, this.quoteBox, randQuote);
-	  changeBackgroundColor(this.billboard);
-	  show(this.quoteBox);
+	  util.hide(this.quoteBox);
+	  var newQuoteBox = this.createNewQuote(randQuote);
+	  this.billboard.replaceChild(newQuoteBox, this.quoteBox);
+	  this.quoteBox = newQuoteBox;
+	  util.changeBackgroundColor(this.billboard);
+	  util.show(this.quoteBox);
 	
 	  this.resetTimer();
 	};
 	
 	Quoter.prototype.resetTimer = function () {
 	  var that = this;
-	  if (that.duration) {
-	    if (that.autoPlay) {
+	  if (this.duration) {
+	    if (this.autoPlay) {
 	      window.clearTimeout(that.autoPlay);
 	    }
-	    that.autoPlay = window.setTimeout(that.printQuote.bind(that), that.duration);
+	    this.autoPlay = window.setTimeout(that.printQuote.bind(that), this.duration);
 	  }
 	};
 	
 	Quoter.prototype.attachTo = function (cssSelector) {
 	  this.billboard = document.querySelector(cssSelector);
-	  var quoteboxElement = createQuotebox.call(this.config.templates, this.config.quoteClass, this.config.title);
-	  this.billboard.insertBefore(quoteboxElement, this.billboard.firstChild);
-	  this.quoteBox = document.querySelector(cssSelector + ' .' + this.config.quoteClass);
+	  this.quoteBox = this.createQuotebox(this.config.quoteClass, this.config.title);
+	  this.billboard.insertBefore(this.quoteBox, this.billboard.firstChild);
 	  return this;
 	};
 	
@@ -104,66 +110,29 @@ webpackJsonp([0],{
 	  var that = this;
 	  var targetButton = document.querySelector(cssSelector);
 	  targetButton.addEventListener('click', that.printQuote.bind(that));
-	  return that;
+	  return this;
 	};
 	
 	Quoter.prototype.setAutoplay = function (duration) {
 	  var that = this;
 	  this.duration = duration;
 	  window.setTimeout(that.printQuote.bind(that), duration);
-	  return that;
+	  return this;
 	};
 	
+	module.exports.Quoter = Quoter;
 	window.Quoter = Quoter;
 
 /***/ },
-
-/***/ 299:
+/* 1 */
 /***/ function(module, exports) {
 
 	'use strict';
 	
+	// Random integer generator
+	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 	
-	var template = function template(key, content) {
-	  return '' + this[key].begin + content + this[key].end;
-	};
-	
-	// Handles each sub-tag template
-	var createTags = function createTags(tagString) {
-	  var that = this;
-	  return tagString.split(' ').map(function (tag) {
-	    return template.call(that, 'tag', tag);
-	  }).join('');
-	};
-	
-	// assembles the html string for each element from the template array
-	var makeElement = function makeElement(obj, key) {
-	  var content = key === 'tags' ? createTags.call(this, obj[key]) : obj[key];
-	  return template.call(this, key, content);
-	};
-	
-	var createQuotebox = function createQuotebox(classname, title) {
-	  var quotebox = document.createElement('div');
-	  quotebox.innerHTML = template.call(this, 'title', title);
-	  quotebox.className = classname;
-	  return quotebox;
-	};
-	
-	var createNewQuote = function createNewQuote(quoteBox, randQuote) {
-	  var that = this;
-	  // Get keynames in an array, then map through them
-	  quoteBox.innerHTML = '';
-	  Object.keys(randQuote).map(function (key, index) {
-	    // Append first 2 to the quoteBox, the rest go inside the source element
-	    var target = index < 2 ? quoteBox : quoteBox.getElementsByClassName('source')[0];
-	
-	    target.innerHTML += makeElement.call(that, randQuote, key);
-	  });
-	  return quoteBox;
-	};
-	
-	// Random integer generator
 	var random = function random(min, max) {
 	  var low = min < max ? min : max;
 	  var high = max > min ? max : min;
@@ -179,11 +148,6 @@ webpackJsonp([0],{
 	  array.length = 0; // Reset the list of used quotes if we've used them all
 	};
 	
-	var useQuote = function useQuote(quoteObj, index) {
-	  quoteObj.used.push(index); // Add it to the list of used quotes
-	  return quoteObj.new[index]; // Return the quote
-	};
-	
 	var hide = function hide(element) {
 	  element.style.opacity = '0';
 	};
@@ -196,42 +160,88 @@ webpackJsonp([0],{
 	  billboard.style.backgroundColor = getRandomColor();
 	};
 	
-	// extend code snippet from http://youmightnotneedjquery.com/,
+	// extend code snippet modified from YouMightNotNeedjQuery
+	// http://youmightnotneedjquery.com/,
 	// https://github.com/HubSpot/YouMightNotNeedjQuery
 	
 	var extend = function extend(out) {
 	  out = out || {};
-	
-	  for (var i = 1; i < arguments.length; i++) {
-	    var obj = arguments[i];
-	
-	    if (!obj) continue;
-	
-	    for (var key in obj) {
-	      if (obj.hasOwnProperty(key)) {
-	        if (_typeof(obj[key]) === 'object') out[key] = extend(out[key], obj[key]);else out[key] = obj[key];
-	      }
+	  [].concat(Array.prototype.slice.call(arguments)).slice(1).map(function (obj) {
+	    if (!obj) {
+	      return false;
 	    }
-	  }
-	
+	    Object.keys(obj).map(function (key) {
+	      if (obj.hasOwnProperty(key)) {
+	        out[key] = _typeof(obj[key]) === 'object' ? extend(out[key], obj[key]) : obj[key];
+	      }
+	    });
+	  });
 	  return out;
 	};
 	
 	module.exports.random = random;
-	module.exports.template = template;
 	module.exports.getRandomColor = getRandomColor;
-	module.exports.createTags = createTags;
-	module.exports.makeElement = makeElement;
 	module.exports.clearArray = clearArray;
-	module.exports.useQuote = useQuote;
-	module.exports.createQuotebox = createQuotebox;
 	module.exports.hide = hide;
 	module.exports.show = show;
-	module.exports.createNewQuote = createNewQuote;
 	module.exports.changeBackgroundColor = changeBackgroundColor;
 	module.exports.extend = extend;
 
-/***/ }
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
 
-});
+	'use strict';
+	
+	var TemplateEngine = function TemplateEngine(templateObj) {
+	
+	  this.layoutFunc = function (key) {
+	    return templateObj[key];
+	  };
+	  this.conditional = checkPlural;
+	  this.condOne = plainFormat;
+	  this.condTwo = stringSpaceFormat;
+	};
+	
+	function checkPlural(key) {
+	  return key.slice(-1) == 's';
+	}
+	
+	var plainFormat = function plainFormat(content, key) {
+	  return function () {
+	    return content[key];
+	  };
+	};
+	
+	var stringSpaceFormat = function stringSpaceFormat(content, key, that) {
+	  return function () {
+	    return content[key].split(' ').reduce(function (start, next) {
+	      return start + that.template(function () {
+	        return next;
+	      }, key.slice(0, -1));
+	    }, '');
+	  };
+	};
+	
+	TemplateEngine.prototype.template = function (contentFunc, key) {
+	  return '' + this.layoutFunc(key).begin + contentFunc() + this.layoutFunc(key).end;
+	};
+	
+	TemplateEngine.prototype.makeContentFunc = function (content, key) {
+	  var formatFunc = this.conditional(key) ? this.condTwo : this.condOne;
+	  return formatFunc(content, key, this);
+	};
+	
+	TemplateEngine.prototype.makeElement = function (content, key) {
+	  var contentFunc = this.makeContentFunc(content, key);
+	  return this.template(contentFunc, key);
+	};
+	
+	module.exports.TemplateEngine = TemplateEngine;
+	module.exports.checkPlural = checkPlural;
+	module.exports.plainFormat = plainFormat;
+	module.exports.stringSpaceFormat = stringSpaceFormat;
+
+/***/ }
+]);
 //# sourceMappingURL=app.map.js
