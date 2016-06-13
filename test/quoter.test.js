@@ -1,6 +1,5 @@
 'use strict';
 
-import {starWarsQuotes} from '../build/js/quotes';
 import {expect} from 'chai';
 import * as util from '../src/js/util';
 import {TemplateEngine, stringSpaceFormat, plainFormat, checkPlural} from '../src/js/template_engine';
@@ -126,7 +125,6 @@ describe('Template Engine', function() {
 
   });
 
-
   describe('stringSpaceFormat', function() {
 
     var content;
@@ -143,8 +141,6 @@ describe('Template Engine', function() {
   });
 
 });
-
-
 
 describe('utilities', function() {
 
@@ -175,22 +171,6 @@ describe('utilities', function() {
     it('returns a rbga formatted string', function() {
       var string = util.getRandomColor();
       expect(string).to.match(/^rgba\([0-2]?[0-9]?[0-9]?,\s[0-2]?[0-9]?[0-9]?,\s[0-2]?[0-9]?[0-9]?, 1\.0\)/);
-    });
-  });
-
-  describe('clearArray', function() {
-
-    var arr;
-
-    before(function() {
-      arr = [1,2,3,4,5];
-    });
-
-    it('should be a method on a quotes object');
-
-    it('should clear the array its called on', function() {
-      util.clearArray(arr);
-      expect(arr).to.be.empty;
     });
 
   });
@@ -248,25 +228,190 @@ describe('utilities', function() {
 
   });
 
+  describe('extend', function() {
+
+    var objectOne;
+    var objectTwo;
+    var objectThree;
+    var objectFour;
+    var objectFive;
+    var objectSix;
+    var objectSeven;
+    var objectEight;
+    var objectNine;
+
+    before(function() {
+      objectOne = {"first_property": "value"};
+      objectTwo = {"first_property": "something"};
+      objectThree = {"second_property": "whatever"};
+      objectFour = {"first_property": "something", "second_property": "whatever"};
+      objectFive = {"first_property": "something",
+       "second_property": {
+         "inner_one": "whatever",
+         "inner_two": "something else"}
+      };
+      objectSix = {
+        "second_property": {
+          "inner_one": "whatever",
+          "inner_two": {
+            "1": [2, 3],
+            "2": {"nums": [93, 6, 2],
+                  "sides": {
+                            "directions": {"right":"left"},
+                            "dimentions": {"fourth": 4, "fifth": 5}
+                          }
+                  }
+          }
+        }
+      };
+      objectSeven = {
+        "first_property": "something",
+        "second_property": {
+          "inner_one": "whatever",
+          "inner_two": {
+            "1": [2, 3],
+            "2": {"nums": [93, 6, 2],
+                  "sides": {
+                            "directions": {"right":"left"},
+                            "dimentions": {"fourth": 4, "fifth": 5}
+                          }
+                  }
+          }
+        }
+      };
+      objectEight = {
+        "first_property": "something",
+        "second_property": {
+          "inner_one": "whatever",
+          "inner_two": {
+            "1": [2, 3],
+            "2": {"nums": [93, 6, {"seven": "7", "eight": [8, 9]}],
+                  "sides": {
+                            "directions": {"right":"left"},
+                            "dimentions": {"fourth": 4, "fifth": 5}
+                          }
+                  }
+          }
+        }
+      };
+      objectNine = {
+        "first_property": "value",
+        "second_property": {
+          "inner_one": "whatever",
+          "inner_two": {
+            "1": [2, 3],
+            "2": {"nums": [93, 6, {"seven": "7", "eight": [8, 9]}],
+                  "sides": {
+                            "directions": {"right":"left"},
+                            "dimentions": {"fourth": 4, "fifth": 5}
+                          }
+                  }
+          }
+        }
+      };
+    });
+
+    it('should return a copy of the object it receives', function() {
+
+      var obj = util.extend(objectOne);
+      expect(obj).to.deep.equal(objectOne);
+
+    });
+
+    it('should override a property on first object if present on the second', function() {
+
+      var obj = util.extend(objectOne, objectTwo);
+      expect(obj).to.deep.equal(objectTwo);
+    });
+
+    it('should combine missing properties from both objects', function() {
+
+      var obj = util.extend(objectTwo, objectThree);
+
+      expect(obj).to.deep.equal(objectFour);
+    });
+
+    it('should combine properties deeply from both objects', function() {
+
+      var obj = util.extend(objectFour, objectFive);
+
+      expect(obj).to.deep.equal(objectFive);
+    });
+
+    it('should handle complex layers', function() {
+      var obj = util.extend(objectFive, objectSix);
+      expect(obj).to.deep.equal(objectSeven);
+    });
+
+    it('should handle nesting of arrays and multiple objects', function() {
+      var obj = util.extend(objectSeven, objectEight, objectOne);
+      expect(obj).to.deep.equal(objectNine);
+    });
+
+
+  });
+
 });
+
+
 
 describe('Quoter', function() {
 
-  var quoter = new Quoter(starWarsQuotes, {"title": "Random Star Wars Quotes"});
+  var starWarsQuotes =
+    [
+      {
+        "quote": "You've failed. I am a Jedi, like my father before me.",
+        "source": "Luke Skywalker",
+        "citation": "Return of the Jedi",
+        "year": 1984
+      },
+      {
+        "quote": "Luke, I am your father.",
+        "source": "Darth Vader",
+        "citation": "The Empire Strikes Back",
+        "tags": "humor science"
+      },
+      {
+        "quote": "Of course I love him. He's my brother.",
+        "source": "Princess Leia",
+        "citation": "Return of the Jedi",
+        "year": 1984,
+        "tags": "humor art"
+      },
+      {
+        "quote": "That's right, R2, we're going to the Dagoba system. To see an old friend...",
+        "source": "Luke Skywalker",
+        "citation": "Return of the Jedi",
+        "year": 1984
+      },
+      {
+        "quote": "You are part of the Rebel Alliance and a traitor!",
+        "source": "Darth Vader",
+        "citation": "A New Hope",
+        "tags": "Supense"
+      },
+      {
+        "quote": "Help us, Obi-Wan Kenobi, you're our only hope.",
+        "source": "Princess Leia",
+        "citation": "A New Hope",
+        "year": 1978,
+        "tags": "drama"
+      }
+    ];
 
   describe('Quoter.createQuotebox', function() {
 
+    var quoter;
     var title;
-    var classname;
 
     before(function() {
+      quoter = new Quoter(starWarsQuotes, {"title": "Random Star Wars Quotes"});
       title = 'Star Wars Quotes';
-      classname = 'quote-box';
     });
 
     it('should return a quotebox element', function() {
-      var elementText = `<div class="${classname}"><p class="title">${title}</p></div>`;
-      var quoteBox = quoter.createQuotebox(classname, title);
+      var elementText = `<div class="quote-box"><p class="title">${title}</p></div>`;
+      var quoteBox = quoter.createQuotebox(title);
       expect(quoteBox.outerHTML).to.equal(elementText);
     });
 
@@ -274,9 +419,11 @@ describe('Quoter', function() {
 
   describe('Quoter.createNewQuote', function() {
 
+    var quoter;
     var randQuote;
 
     before(function() {
+      quoter = new Quoter(starWarsQuotes, {"title": "Random Star Wars Quotes"});
       randQuote = {
         "quote": "Of course I love him. He's my brother.",
         "source": "Princess Leia",
@@ -290,6 +437,45 @@ describe('Quoter', function() {
       var expectedElement = '<div class="quote-box"><p class="title"></p><p class="quote">Of course I love him. He\'s my brother.</p><p class="source">Princess Leia<span class="citation">Return of the Jedi</span><span class="year">1984</span><span class="tags">Tags: <p class="tag">humor</p><p class="tag">art</p></span></p></div>';
       var elementProduced = quoter.createNewQuote(randQuote);
       expect(elementProduced.outerHTML).to.equal(expectedElement);
+    });
+
+  });
+
+  describe('Quoter.randomQuote', function() {
+
+    var quoter = new Quoter(starWarsQuotes, {"title": "Random Star Wars Quotes"});
+
+    beforeEach(function() {
+      quoter.randomQuote.used = [];
+    });
+
+    it('should return a quote object', function() {
+      var quoteObj = quoter.randomQuote();
+      expect(quoteObj).to.have.property('quote');
+      expect(quoteObj).to.have.property('source');
+    });
+
+    it('shouldnt return the same quote object in a row', function() {
+      var Obj1 = quoter.randomQuote();
+      var Obj2 = quoter.randomQuote();
+      var Obj3 = quoter.randomQuote();
+      var Obj4 = quoter.randomQuote();
+      var Obj5 = quoter.randomQuote();
+      var Obj6 = quoter.randomQuote();
+
+      expect(Obj6).to.not.be.oneOf([Obj1, Obj2, Obj3, Obj4, Obj5]);
+    });
+
+    it('should repeat the list after all the quote have been used once', function() {
+      var Obj1 = quoter.randomQuote();
+      var Obj2 = quoter.randomQuote();
+      var Obj3 = quoter.randomQuote();
+      var Obj4 = quoter.randomQuote();
+      var Obj5 = quoter.randomQuote();
+      var Obj6 = quoter.randomQuote();
+      var Obj7 = quoter.randomQuote();
+
+      expect(Obj7).to.be.oneOf([Obj1, Obj2, Obj3, Obj4, Obj5, Obj6]);
     });
 
   });

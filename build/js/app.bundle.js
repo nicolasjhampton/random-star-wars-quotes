@@ -14,6 +14,20 @@ webpackJsonp([0],[
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
+	/**
+	 * @namespace
+	 * @property {object}  templates              - The default values for each HTML template.
+	 * @property {object}  templates.quote        - The default beginning and ending template strings for this element.
+	 * @property {object}  templates.source       - The default beginning and ending template strings for this element.
+	 * @property {object}  templates.citation     - The default beginning and ending template strings for this element.
+	 * @property {object}  templates.year         - The default beginning and ending template strings for this element.
+	 * @property {object}  templates.tags         - The default beginning and ending template strings for this element.
+	 * @property {object}  templates.tag          - The default beginning and ending template strings for this element.
+	 * @property {object}  templates.title        - The default beginning and ending template strings for this element.
+	 * @property {object}  templates.quotebox     - The default beginning and ending template strings for this element.
+	 * @property {string}  quoteClass             - The default class name for the quote box element.
+	 * @property {string}  title                  - The default start title of the quote display.
+	 */
 	var defaults = {
 	  "templates": {
 	    "quote": { "begin": "<p class='quote'>", "end": "</p>" },
@@ -29,6 +43,12 @@ webpackJsonp([0],[
 	  "title": ""
 	};
 	
+	/**
+	 * Creates an object to control the display of a list of quotes
+	 * @constructor
+	 * @param {array} quoteArray - The array of quote object to be displayed.
+	 * @param {object} options - A configuration object to be optionally passed in.
+	 */
 	function Quoter(quoteArray, options) {
 	  if (!options) {
 	    options = {};
@@ -38,17 +58,23 @@ webpackJsonp([0],[
 	  this.quotes = quoteArray;
 	};
 	
-	Quoter.prototype.createQuotebox = function (classname, title) {
+	/**
+	 * Creates an quoteBox object set to the starting title
+	 *
+	 * @param {string} classname - The classname for the .
+	 * @param {object} options - A configuration object to be optionally passed in.
+	 */
+	Quoter.prototype.createQuotebox = function (title) {
 	  var quoteBox = document.createElement('div');
 	  quoteBox.innerHTML = this.tEng.makeElement({ "title": title }, 'title');
-	  quoteBox.className = classname;
+	  quoteBox.className = this.config.quoteClass;
 	  return quoteBox;
 	};
 	
 	Quoter.prototype.createNewQuote = function (randQuote) {
 	  var _this = this;
 	
-	  var quoteBox = this.createQuotebox('quote-box', '');
+	  var quoteBox = this.createQuotebox('');
 	  Object.keys(randQuote).map(function (key, index) {
 	    var target = index < 2 ? quoteBox : quoteBox.getElementsByClassName('source')[0];
 	    target.innerHTML += _this.tEng.makeElement(randQuote, key);
@@ -56,15 +82,13 @@ webpackJsonp([0],[
 	  return quoteBox;
 	};
 	
-	// returns a random quote object from the quotes array
 	Quoter.prototype.randomQuote = function randomQuote() {
-	  randomQuote.used = randomQuote.used || []; //self-reference;
+	  randomQuote.used = randomQuote.used || [];
 	
 	  var randomIndex = util.random(0, this.quotes.length);
 	
 	  if (randomQuote.used.length === this.quotes.length) {
-	    // If all the quotes have been used...
-	    util.clearArray(randomQuote.used);
+	    randomQuote.used = [];
 	  }
 	
 	  if (!randomQuote.used.includes(randomIndex)) {
@@ -77,7 +101,7 @@ webpackJsonp([0],[
 	
 	Quoter.prototype.printQuote = function () {
 	  var that = this;
-	  var randQuote = that.randomQuote(); // Get a random quote
+	  var randQuote = that.randomQuote();
 	
 	  util.hide(this.quoteBox);
 	  var newQuoteBox = this.createNewQuote(randQuote);
@@ -101,7 +125,7 @@ webpackJsonp([0],[
 	
 	Quoter.prototype.attachTo = function (cssSelector) {
 	  this.billboard = document.querySelector(cssSelector);
-	  this.quoteBox = this.createQuotebox(this.config.quoteClass, this.config.title);
+	  this.quoteBox = this.createQuotebox(this.config.title);
 	  this.billboard.insertBefore(this.quoteBox, this.billboard.firstChild);
 	  return this;
 	};
@@ -144,10 +168,6 @@ webpackJsonp([0],[
 	  return 'rgba(' + random(0, 256) + ', ' + random(0, 256) + ', ' + random(0, 256) + ', 1.0)';
 	};
 	
-	var clearArray = function clearArray(array) {
-	  array.length = 0; // Reset the list of used quotes if we've used them all
-	};
-	
 	var hide = function hide(element) {
 	  element.style.opacity = '0';
 	};
@@ -156,32 +176,23 @@ webpackJsonp([0],[
 	  element.style.opacity = '1';
 	};
 	
-	var changeBackgroundColor = function changeBackgroundColor(billboard) {
-	  billboard.style.backgroundColor = getRandomColor();
+	var changeBackgroundColor = function changeBackgroundColor(element) {
+	  element.style.backgroundColor = getRandomColor();
 	};
 	
-	// extend code snippet modified from YouMightNotNeedjQuery
-	// http://youmightnotneedjquery.com/,
-	// https://github.com/HubSpot/YouMightNotNeedjQuery
-	
-	var extend = function extend(out) {
-	  out = out || {};
-	  [].concat(Array.prototype.slice.call(arguments)).slice(1).map(function (obj) {
-	    if (!obj) {
-	      return false;
+	var extend = function extend() /* arguments */{
+	  var argsIn = [].concat(Array.prototype.slice.call(arguments)).slice(0);
+	  var out = argsIn.reduce(function (obj1, obj2) {
+	    for (var key in obj2) {
+	      obj1[key] = _typeof(obj2[key]) === 'object' && !Array.isArray(obj2[key]) ? extend(obj2[key]) : obj2[key];
 	    }
-	    Object.keys(obj).map(function (key) {
-	      if (obj.hasOwnProperty(key)) {
-	        out[key] = _typeof(obj[key]) === 'object' ? extend(out[key], obj[key]) : obj[key];
-	      }
-	    });
-	  });
+	    return obj1;
+	  }, {});
 	  return out;
 	};
 	
 	module.exports.random = random;
 	module.exports.getRandomColor = getRandomColor;
-	module.exports.clearArray = clearArray;
 	module.exports.hide = hide;
 	module.exports.show = show;
 	module.exports.changeBackgroundColor = changeBackgroundColor;

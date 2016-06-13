@@ -12,10 +12,6 @@ var getRandomColor = function() {
   return `rgba(${random(0, 256)}, ${random(0, 256)}, ${random(0, 256)}, 1.0)`;
 };
 
-var clearArray = function(array) {
-  array.length = 0; // Reset the list of used quotes if we've used them all
-};
-
 var hide = function(element) {
   element.style.opacity = '0';
 };
@@ -24,30 +20,23 @@ var show = function(element) {
   element.style.opacity = '1';
 };
 
-var changeBackgroundColor = function(billboard) {
-  billboard.style.backgroundColor = getRandomColor();
+var changeBackgroundColor = function(element) {
+  element.style.backgroundColor = getRandomColor();
 };
 
-// extend code snippet modified from YouMightNotNeedjQuery
-// http://youmightnotneedjquery.com/,
-// https://github.com/HubSpot/YouMightNotNeedjQuery
-
-var extend = function(out) {
-  out = out || {};
-  [...arguments].slice(1).map(function(obj) {
-    if (!obj) { return false; }
-    Object.keys(obj).map((key) => {
-      if (obj.hasOwnProperty(key)) {
-        out[key] = (typeof obj[key] === 'object') ? extend(out[key], obj[key]) : obj[key];
-      }
-    });
-  });
+var extend = function(/* arguments */) {
+  var argsIn = [...arguments].slice(0);
+  var out = argsIn.reduce(function(obj1, obj2) {
+    for(var key in obj2) {
+      obj1[key] = (typeof obj2[key] === 'object' && !(Array.isArray(obj2[key]))) ? extend(obj2[key]) : obj2[key];
+    }
+    return obj1;
+  }, {});
   return out;
 };
 
 module.exports.random = random;
 module.exports.getRandomColor = getRandomColor;
-module.exports.clearArray = clearArray;
 module.exports.hide = hide;
 module.exports.show = show;
 module.exports.changeBackgroundColor = changeBackgroundColor;
