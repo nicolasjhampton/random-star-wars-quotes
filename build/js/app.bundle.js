@@ -15,7 +15,8 @@ webpackJsonp([0],[
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	/**
-	 * @namespace
+	 * @constant {object}
+	 * @namespace defaults
 	 * @property {object}  templates              - The default values for each HTML template.
 	 * @property {object}  templates.quote        - The default beginning and ending template strings for this element.
 	 * @property {object}  templates.source       - The default beginning and ending template strings for this element.
@@ -44,8 +45,10 @@ webpackJsonp([0],[
 	};
 	
 	/**
-	 * Creates an object to control the display of a list of quotes
+	 * @summary Creates an object to control the display of a list of quotes
 	 * @constructor
+	 * @requires module:util
+	 * @requires module:template_engine/TemplateEngine
 	 * @param {array} quoteArray - The array of quote object to be displayed.
 	 * @param {object} options - A configuration object to be optionally passed in.
 	 */
@@ -59,10 +62,12 @@ webpackJsonp([0],[
 	};
 	
 	/**
-	 * Creates an quoteBox object set to the starting title
-	 *
-	 * @param {string} classname - The classname for the .
-	 * @param {object} options - A configuration object to be optionally passed in.
+	 * @summary Creates an quoteBox object set to the starting title
+	 * @memberof Quoter
+	 * @param {string} title - Title text to fill in the title element.
+	 *                         Use an empty string if no title is desired.
+	 * @returns {HTMLCollection} quoteBox - an element representing
+	 *                                              the box the quote will reside in.
 	 */
 	Quoter.prototype.createQuotebox = function (title) {
 	  var quoteBox = document.createElement('div');
@@ -71,17 +76,30 @@ webpackJsonp([0],[
 	  return quoteBox;
 	};
 	
-	Quoter.prototype.createNewQuote = function (randQuote) {
+	/**
+	 * @summary Creates a quoteBox and attaches a quote to it
+	 * @memberof Quoter
+	 * @param {object} quote - athe quote object to attach to the quoteBox.
+	 * @returns {HTMLCollection} quoteBox - newly created quotebox with a new quote attached.
+	 *
+	 */
+	Quoter.prototype.createNewQuote = function (quote) {
 	  var _this = this;
 	
 	  var quoteBox = this.createQuotebox('');
-	  Object.keys(randQuote).map(function (key, index) {
+	  Object.keys(quote).map(function (key, index) {
 	    var target = index < 2 ? quoteBox : quoteBox.getElementsByClassName('source')[0];
-	    target.innerHTML += _this.tEng.makeElement(randQuote, key);
+	    target.innerHTML += _this.tEng.makeElement(quote, key);
 	  });
 	  return quoteBox;
 	};
 	
+	/**
+	 * @summary Gets a random quote from the quoteArray
+	 * @memberof Quoter
+	 * @returns {object} quote - an object with at least two @prop: quote and source.
+	 *
+	 */
 	Quoter.prototype.randomQuote = function randomQuote() {
 	  randomQuote.used = randomQuote.used || [];
 	
@@ -99,6 +117,11 @@ webpackJsonp([0],[
 	  return this.randomQuote(); // Recursion like woah ;)
 	};
 	
+	/**
+	 * @summary Displays a new random quote onto the quoteBox
+	 * @memberof Quoter
+	 *
+	 */
 	Quoter.prototype.printQuote = function () {
 	  var that = this;
 	  var randQuote = that.randomQuote();
@@ -113,6 +136,11 @@ webpackJsonp([0],[
 	  this.resetTimer();
 	};
 	
+	/**
+	 * @summary Resets the autoplay timer on the Quoter object.
+	 * @memberof Quoter
+	 *
+	 */
 	Quoter.prototype.resetTimer = function () {
 	  var that = this;
 	  if (this.duration) {
@@ -123,6 +151,13 @@ webpackJsonp([0],[
 	  }
 	};
 	
+	/**
+	 * @summary Configuration method for what element the quotebox attaches to.
+	 * @memberof Quoter
+	 * @param {string} cssSelector - css selector for the background of the quotebox
+	 * @returns {object} Quoter object
+	 *
+	 */
 	Quoter.prototype.attachTo = function (cssSelector) {
 	  this.billboard = document.querySelector(cssSelector);
 	  this.quoteBox = this.createQuotebox(this.config.title);
@@ -130,6 +165,13 @@ webpackJsonp([0],[
 	  return this;
 	};
 	
+	/**
+	 * @summary Configuration method to set a button to change the quote.
+	 * @memberof Quoter
+	 * @param {string} cssSelector - css selector for the quote change button
+	 * @returns {object} Quoter object
+	 *
+	 */
 	Quoter.prototype.setButton = function (cssSelector) {
 	  var that = this;
 	  var targetButton = document.querySelector(cssSelector);
@@ -137,6 +179,13 @@ webpackJsonp([0],[
 	  return this;
 	};
 	
+	/**
+	 * @summary Resets the autoplay timer on the Quoter object.
+	 * @memberof Quoter
+	 * @param {number} duration - amount of time between quote changes in milliseconds
+	 * @returns {object} Quoter object
+	 *
+	 */
 	Quoter.prototype.setAutoplay = function (duration) {
 	  var that = this;
 	  this.duration = duration;
