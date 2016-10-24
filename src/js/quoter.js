@@ -5,19 +5,19 @@ import * as util from './util';
 import {TemplateEngine} from './template_engine';
 
 /**
- * @constant {object}
+ * @constant {Object}
  * @namespace defaults
- * @property {object}  templates              - The default values for each HTML template.
- * @property {object}  templates.quote        - The default beginning and ending template strings for this element.
- * @property {object}  templates.source       - The default beginning and ending template strings for this element.
- * @property {object}  templates.citation     - The default beginning and ending template strings for this element.
- * @property {object}  templates.year         - The default beginning and ending template strings for this element.
- * @property {object}  templates.tags         - The default beginning and ending template strings for this element.
- * @property {object}  templates.tag          - The default beginning and ending template strings for this element.
- * @property {object}  templates.title        - The default beginning and ending template strings for this element.
- * @property {object}  templates.quotebox     - The default beginning and ending template strings for this element.
- * @property {string}  quoteClass             - The default class name for the quote box element.
- * @property {string}  title                  - The default start title of the quote display.
+ * @property {Object}  templates              - The default values for each HTML template.
+ * @property {Object}  templates.quote        - The default beginning and ending template strings for this element.
+ * @property {Object}  templates.source       - The default beginning and ending template strings for this element.
+ * @property {Object}  templates.citation     - The default beginning and ending template strings for this element.
+ * @property {Object}  templates.year         - The default beginning and ending template strings for this element.
+ * @property {Object}  templates.tags         - The default beginning and ending template strings for this element.
+ * @property {Object}  templates.tag          - The default beginning and ending template strings for this element.
+ * @property {Object}  templates.title        - The default beginning and ending template strings for this element.
+ * @property {Object}  templates.quotebox     - The default beginning and ending template strings for this element.
+ * @property {String}  quoteClass             - The default class name for the quote box element.
+ * @property {String}  title                  - The default start title of the quote display.
  */
 const defaults = {
   "templates": {
@@ -35,12 +35,13 @@ const defaults = {
 };
 
 /**
- * @summary Creates an object to control the display of a list of quotes
+ * Creates an object to control the display of a list of quotes
  * @constructor
  * @requires module:util
  * @requires module:template_engine/TemplateEngine
- * @param {array} quoteArray - The array of quote object to be displayed.
- * @param {object} options - A configuration object to be optionally passed in.
+ *
+ * @param {Array} quoteArray - The array of quote object to be displayed.
+ * @param {Object} options - A configuration object to be optionally passed in.
  */
 function Quoter(quoteArray, options) {
   if(!options) { options = {}; }
@@ -50,12 +51,13 @@ function Quoter(quoteArray, options) {
 };
 
 /**
- * @summary Creates an quoteBox object set to the starting title
+ * Creates an quoteBox object set to the starting title
  * @memberof Quoter
- * @param {string} title - Title text to fill in the title element.
+ *
+ * @param {String} title - Title text to fill in the title element.
  *                         Use an empty string if no title is desired.
  * @returns {HTMLCollection} quoteBox - an element representing
- *                                              the box the quote will reside in.
+ *                                      the box the quote will reside in.
  */
 Quoter.prototype.createQuotebox = function(title) {
   var quoteBox = document.createElement('div');
@@ -65,9 +67,10 @@ Quoter.prototype.createQuotebox = function(title) {
 };
 
 /**
- * @summary Creates a quoteBox and attaches a quote to it
+ * Creates a quoteBox and attaches a quote to it
  * @memberof Quoter
- * @param {object} quote - athe quote object to attach to the quoteBox.
+ *
+ * @param {Object} quote - athe quote object to attach to the quoteBox.
  * @returns {HTMLCollection} quoteBox - newly created quotebox with a new quote attached.
  *
  */
@@ -81,9 +84,10 @@ Quoter.prototype.createNewQuote = function(quote) {
 };
 
 /**
- * @summary Gets a random quote from the quoteArray
+ * Gets a random quote from the quoteArray
  * @memberof Quoter
- * @returns {object} quote - an object with at least two @prop: quote and source.
+ *
+ * @returns {Object} quote - an object with at least two @prop: quote and source.
  *
  */
 Quoter.prototype.randomQuote = function randomQuote() {
@@ -105,7 +109,7 @@ Quoter.prototype.randomQuote = function randomQuote() {
 };
 
 /**
- * @summary Displays a new random quote onto the quoteBox
+ * Displays a new random quote onto the quoteBox
  * @memberof Quoter
  *
  */
@@ -124,7 +128,7 @@ Quoter.prototype.printQuote = function() {
 };
 
 /**
- * @summary Resets the autoplay timer on the Quoter object.
+ * Resets the autoplay timer on the Quoter object.
  * @memberof Quoter
  *
  */
@@ -137,11 +141,11 @@ Quoter.prototype.resetTimer = function() {
 };
 
 /**
- * @summary Configuration method for what element the quotebox attaches to.
+ * Configuration method for what element the quotebox attaches to.
  * @memberof Quoter
- * @param {string} cssSelector - css selector for the background of the quotebox
- * @returns {object} Quoter object
  *
+ * @param {String} cssSelector - css selector for the background of the quotebox
+ * @returns {this} Quoter
  */
 Quoter.prototype.attachTo = function(cssSelector) {
   this.billboard = document.querySelector(cssSelector);
@@ -151,11 +155,11 @@ Quoter.prototype.attachTo = function(cssSelector) {
 };
 
 /**
- * @summary Configuration method to set a button to change the quote.
+ * Configuration method to set a button to change the quote.
  * @memberof Quoter
- * @param {string} cssSelector - css selector for the quote change button
- * @returns {object} Quoter object
  *
+ * @param {String} cssSelector - css selector for the quote change button
+ * @returns {this} Quoter
  */
 Quoter.prototype.setButton = function(cssSelector) {
   var that = this;
@@ -165,11 +169,11 @@ Quoter.prototype.setButton = function(cssSelector) {
 };
 
 /**
- * @summary Resets the autoplay timer on the Quoter object.
+ * Resets the autoplay timer on the Quoter object.
  * @memberof Quoter
- * @param {number} duration - amount of time between quote changes in milliseconds
- * @returns {object} Quoter object
  *
+ * @param {Number} duration - amount of time between quote changes in milliseconds
+ * @returns {this} Quoter
  */
 Quoter.prototype.setAutoplay = function(duration) {
   var that = this;

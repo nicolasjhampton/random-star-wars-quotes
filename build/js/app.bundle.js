@@ -253,7 +253,7 @@ webpackJsonp([0],[
 
 	'use strict';
 	
-	var TemplateEngine = function TemplateEngine(templateObj) {
+	function TemplateEngine(templateObj) {
 	
 	  this.layoutFunc = function (key) {
 	    return templateObj[key];
@@ -261,27 +261,43 @@ webpackJsonp([0],[
 	  this.conditional = checkPlural;
 	  this.condOne = plainFormat;
 	  this.condTwo = stringSpaceFormat;
-	};
+	}
 	
 	function checkPlural(key) {
 	  return key.slice(-1) == 's';
 	}
 	
-	var plainFormat = function plainFormat(content, key) {
+	/**
+	 * Formatting function to use when checkPlural evaluates true
+	 * used for tag formatting
+	 * @param content
+	 * @param key
+	 * @returns function
+	 */
+	function plainFormat(content, key) {
 	  return function () {
 	    return content[key];
 	  };
-	};
+	}
 	
-	var stringSpaceFormat = function stringSpaceFormat(content, key, that) {
+	/**
+	 * Formatting function to use when checkPlural evaluates true
+	 * used for tag formatting
+	 * @param content
+	 * @param key
+	 * @returns function
+	 */
+	function stringSpaceFormat(content, key) {
+	  var _this = this;
+	
 	  return function () {
 	    return content[key].split(' ').reduce(function (start, next) {
-	      return start + that.template(function () {
+	      return start + _this.template(function () {
 	        return next;
 	      }, key.slice(0, -1));
 	    }, '');
 	  };
-	};
+	}
 	
 	TemplateEngine.prototype.template = function (contentFunc, key) {
 	  return '' + this.layoutFunc(key).begin + contentFunc() + this.layoutFunc(key).end;
@@ -289,7 +305,7 @@ webpackJsonp([0],[
 	
 	TemplateEngine.prototype.makeContentFunc = function (content, key) {
 	  var formatFunc = this.conditional(key) ? this.condTwo : this.condOne;
-	  return formatFunc(content, key, this);
+	  return formatFunc(content, key);
 	};
 	
 	TemplateEngine.prototype.makeElement = function (content, key) {
